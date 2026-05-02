@@ -279,79 +279,219 @@
                     </div>
                 </div>
                 
-                <!-- Анимированная SVG графика (Абстракция нейросети) -->
+                <!-- Анимированная SVG графика (GAN: Noise to Art) -->
                 <div class="mt-16 lg:mt-0 lg:col-span-6 fade-in-section" style="transition-delay: 0.2s;">
-                    <div class="glass-card rounded-2xl p-8 relative overflow-hidden h-[400px] flex items-center justify-center">
+                    <div class="glass-card rounded-2xl p-4 sm:p-8 relative overflow-hidden shadow-2xl border border-white/10">
                         <!-- Декоративные свечения -->
-                        <div class="absolute inset-0 bg-gradient-to-tr from-purple-500/10 to-blue-500/10 mix-blend-overlay"></div>
+                        <div class="absolute inset-0 bg-gradient-to-tr from-purple-500/5 to-blue-500/5 mix-blend-overlay"></div>
                         
-                        <svg class="w-full h-full" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%" class="relative z-10">
                             <defs>
-                                <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-                                    <stop offset="0%" stop-color="#a855f7" stop-opacity="0.8"/>
-                                    <stop offset="100%" stop-color="#a855f7" stop-opacity="0"/>
-                                </radialGradient>
-                                <style>
-                                    .net-node { fill: #f8fafc; transition: all 0.3s; }
-                                    .net-node.active { fill: #c084fc; filter: drop-shadow(0 0 8px #a855f7); }
-                                    .net-link { stroke: rgba(148, 163, 184, 0.2); stroke-width: 1.5; stroke-dasharray: 5; animation: dash-flow 20s linear infinite; }
-                                    .net-link.active { stroke: rgba(192, 132, 252, 0.6); stroke-dasharray: 10; animation: dash-flow-fast 2s linear infinite; }
-                                    @keyframes dash-flow { to { stroke-dashoffset: -100; } }
-                                    @keyframes dash-flow-fast { to { stroke-dashoffset: -40; } }
-                                    @keyframes pulse-node { 0% { r: 4; } 50% { r: 7; fill: #e879f9; } 100% { r: 4; } }
-                                </style>
+                                <!-- Неоновые градиенты (фиолетовый -> синий) -->
+                                <linearGradient id="neonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#a855f7" />
+                                    <stop offset="100%" stop-color="#3b82f6" />
+                                </linearGradient>
+                                
+                                <linearGradient id="neonGradRev" x1="100%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#a855f7" />
+                                    <stop offset="100%" stop-color="#3b82f6" />
+                                </linearGradient>
+
+                                <!-- Эффект свечения (Glow) -->
+                                <filter id="glow-svg" x="-50%" y="-50%" width="200%" height="200%">
+                                    <feGaussianBlur stdDeviation="3" result="blur" />
+                                    <feMerge>
+                                        <feMergeNode in="blur" />
+                                        <feMergeNode in="SourceGraphic" />
+                                    </feMerge>
+                                </filter>
+
+                                <!-- Эффект мягкого свечения для частиц -->
+                                <filter id="particleGlow" x="-50%" y="-50%" width="200%" height="200%">
+                                    <feGaussianBlur stdDeviation="1.5" result="blur" />
+                                    <feMerge>
+                                        <feMergeNode in="blur" />
+                                        <feMergeNode in="SourceGraphic" />
+                                    </feMerge>
+                                </filter>
+
+                                <!-- Киберпанк-сетка на фон -->
+                                <pattern id="grid-svg" width="20" height="20" patternUnits="userSpaceOnUse">
+                                    <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#3b82f6" stroke-opacity="0.05" stroke-width="1" />
+                                </pattern>
+
+                                <!-- Базовые изогнутые пути (линии от шума к картине) -->
+                                <path id="p1" d="M 40 170 C 80 170, 90 120, 130 120 C 170 120, 160 173, 200 173 C 240 173, 230 120, 270 120 C 310 120, 300 190, 330 190" />
+                                <path id="p2" d="M 30 190 C 80 190, 90 173, 130 173 C 170 173, 160 120, 200 120 C 240 120, 230 173, 270 173 C 310 173, 300 190, 330 190" />
+                                <path id="p3" d="M 55 200 C 90 200, 90 226, 130 226 C 170 226, 160 280, 200 280 C 240 280, 230 226, 270 226 C 310 226, 300 190, 330 190" />
+                                <path id="p4" d="M 35 215 C 80 215, 90 280, 130 280 C 170 280, 160 226, 200 226 C 240 226, 230 280, 270 280 C 310 280, 300 190, 330 190" />
+                                <path id="p5" d="M 45 230 C 80 230, 90 173, 130 173 C 170 173, 160 226, 200 226 C 240 226, 230 173, 270 173 C 310 173, 300 190, 330 190" />
+                                <path id="p6" d="M 40 170 C 80 170, 90 226, 130 226 C 170 226, 160 173, 200 173 C 240 173, 230 280, 270 280 C 310 280, 300 190, 330 190" />
+                                <path id="p7" d="M 35 215 C 80 215, 90 120, 130 120 C 170 120, 160 280, 200 280 C 240 280, 230 120, 270 120 C 310 120, 300 190, 330 190" />
+                                <path id="p8" d="M 55 200 C 90 200, 90 280, 130 280 C 170 280, 160 120, 200 120 C 240 120, 230 226, 270 226 C 310 226, 300 190, 330 190" />
                             </defs>
-                            
-                            <!-- Связи слоев -->
-                            <g class="links">
-                                <!-- Input to Hidden 1 -->
-                                <path class="net-link active" d="M 50 100 L 150 50" />
-                                <path class="net-link" d="M 50 100 L 150 150" />
-                                <path class="net-link" d="M 50 100 L 150 250" />
-                                <path class="net-link active" d="M 50 200 L 150 150" />
-                                <path class="net-link" d="M 50 200 L 150 250" />
-                                <path class="net-link" d="M 50 300 L 150 250" />
-                                <path class="net-link active" d="M 50 300 L 150 350" />
-                                
-                                <!-- Hidden 1 to Hidden 2 -->
-                                <path class="net-link active" d="M 150 50 L 250 100" />
-                                <path class="net-link" d="M 150 150 L 250 100" />
-                                <path class="net-link active" d="M 150 150 L 250 200" />
-                                <path class="net-link" d="M 150 250 L 250 200" />
-                                <path class="net-link" d="M 150 250 L 250 300" />
-                                <path class="net-link active" d="M 150 350 L 250 300" />
-                                
-                                <!-- Hidden 2 to Output -->
-                                <path class="net-link active" d="M 250 100 L 350 150" />
-                                <path class="net-link" d="M 250 200 L 350 150" />
-                                <path class="net-link active" d="M 250 200 L 350 250" />
-                                <path class="net-link" d="M 250 300 L 350 250" />
+
+                            <style>
+                                /* Анимация "Дыхание" для линий сети */
+                                .base-line-gan {
+                                    fill: none;
+                                    stroke: url(#neonGrad);
+                                    stroke-width: 1.5;
+                                    animation: breath-gan 3s infinite alternate ease-in-out;
+                                }
+                                @keyframes breath-gan {
+                                    0% { opacity: 0.1; }
+                                    100% { opacity: 0.5; }
+                                }
+
+                                /* Анимация бегущих частиц */
+                                .particle-gan {
+                                    fill: none;
+                                    stroke: #fff;
+                                    stroke-width: 2;
+                                    stroke-dasharray: 4 150;
+                                    filter: url(#particleGlow);
+                                    animation: run-gan linear infinite;
+                                }
+                                @keyframes run-gan {
+                                    0% { stroke-dashoffset: 0; }
+                                    100% { stroke-dashoffset: -154; }
+                                }
+
+                                .run1 { animation-duration: 3s; }
+                                .run2 { animation-duration: 4s; animation-delay: -1s; }
+                                .run3 { animation-duration: 2.8s; animation-delay: -2s; }
+                                .run4 { animation-duration: 3.5s; animation-delay: -0.5s; }
+                                .run5 { animation-duration: 4.2s; animation-delay: -1.5s; }
+                                .run6 { animation-duration: 3.1s; animation-delay: -0.8s; }
+                                .run7 { animation-duration: 3.8s; animation-delay: -2.2s; }
+                                .run8 { animation-duration: 2.9s; animation-delay: -1.2s; }
+
+                                .glass-canvas-gan {
+                                    fill: rgba(59, 130, 246, 0.05);
+                                    stroke: url(#neonGradRev);
+                                    stroke-width: 1.5;
+                                }
+                            </style>
+
+                            <!-- Фон -->
+                            <rect width="100%" height="100%" fill="transparent" />
+                            <rect width="100%" height="100%" fill="url(#grid-svg)" />
+
+                            <!-- Текстовые метки -->
+                            <text x="40" y="125" fill="#a855f7" font-size="12" font-weight="bold" letter-spacing="2" text-anchor="middle" filter="url(#glow-svg)">NOISE</text>
+                            <text x="345" y="125" fill="#3b82f6" font-size="12" font-weight="bold" letter-spacing="2" text-anchor="middle" filter="url(#glow-svg)">ART</text>
+                            <text x="200" y="340" fill="#fff" font-size="10" font-weight="bold" letter-spacing="4" text-anchor="middle" opacity="0.3">GENERATIVE ADVERSARIAL NETWORK</text>
+
+                            <!-- Группа связей (Линии + Частицы) -->
+                            <g id="network-lines-gan">
+                                <use href="#p1" class="base-line-gan" style="animation-delay: 0s" />
+                                <use href="#p2" class="base-line-gan" style="animation-delay: 0.2s" />
+                                <use href="#p3" class="base-line-gan" style="animation-delay: 0.4s" />
+                                <use href="#p4" class="base-line-gan" style="animation-delay: 0.6s" />
+                                <use href="#p5" class="base-line-gan" style="animation-delay: 0.8s" />
+                                <use href="#p6" class="base-line-gan" style="animation-delay: 1.0s" />
+                                <use href="#p7" class="base-line-gan" style="animation-delay: 1.2s" />
+                                <use href="#p8" class="base-line-gan" style="animation-delay: 1.4s" />
+
+                                <use href="#p1" class="particle-gan run1" />
+                                <use href="#p2" class="particle-gan run2" />
+                                <use href="#p3" class="particle-gan run3" />
+                                <use href="#p4" class="particle-gan run4" />
+                                <use href="#p5" class="particle-gan run5" />
+                                <use href="#p6" class="particle-gan run6" />
+                                <use href="#p7" class="particle-gan run7" />
+                                <use href="#p8" class="particle-gan run8" />
                             </g>
 
-                            <!-- Узлы -->
-                            <g class="nodes">
-                                <!-- Input Layer -->
-                                <circle class="net-node" cx="50" cy="100" r="5" style="animation: pulse-node 3s infinite 0.1s;" />
-                                <circle class="net-node active" cx="50" cy="200" r="6" style="animation: pulse-node 3s infinite 0.5s;" />
-                                <circle class="net-node" cx="50" cy="300" r="5" style="animation: pulse-node 3s infinite 0.9s;" />
-                                
-                                <!-- Hidden Layer 1 -->
-                                <circle class="net-node active" cx="150" cy="50" r="6" style="animation: pulse-node 2.5s infinite 0.2s;" />
-                                <circle class="net-node" cx="150" cy="150" r="5" style="animation: pulse-node 2.5s infinite 0.6s;" />
-                                <circle class="net-node active" cx="150" cy="250" r="6" style="animation: pulse-node 2.5s infinite 1.0s;" />
-                                <circle class="net-node" cx="150" cy="350" r="5" style="animation: pulse-node 2.5s infinite 1.4s;" />
-                                
-                                <!-- Hidden Layer 2 -->
-                                <circle class="net-node active" cx="250" cy="100" r="6" style="animation: pulse-node 2.8s infinite 0.3s;" />
-                                <circle class="net-node" cx="250" cy="200" r="5" style="animation: pulse-node 2.8s infinite 0.7s;" />
-                                <circle class="net-node active" cx="250" cy="300" r="6" style="animation: pulse-node 2.8s infinite 1.1s;" />
-                                
-                                <!-- Output Layer -->
-                                <circle class="net-node active" cx="350" cy="150" r="8" style="animation: pulse-node 2s infinite 0s;" />
-                                <circle class="net-node active" cx="350" cy="250" r="8" style="animation: pulse-node 2s infinite 0.5s;" />
-                                
-                                <!-- Центральное свечение -->
-                                <circle cx="200" cy="200" r="150" fill="url(#glow)" opacity="0.3" />
+                            <!-- БЛОК "ШУМ" -->
+                            <g id="noise-block-gan">
+                                <circle cx="40" cy="170" r="3" filter="url(#glow-svg)">
+                                    <animate attributeName="r" values="2;5;2" dur="0.9s" repeatCount="indefinite" />
+                                    <animate attributeName="fill" values="#a855f7;#3b82f6;#a855f7" dur="2s" repeatCount="indefinite" />
+                                </circle>
+                                <circle cx="30" cy="190" r="3" filter="url(#glow-svg)">
+                                    <animate attributeName="r" values="2.5;6;2.5" dur="1.2s" repeatCount="indefinite" />
+                                    <animate attributeName="fill" values="#a855f7;#3b82f6;#a855f7" dur="2.5s" repeatCount="indefinite" />
+                                </circle>
+                                <circle cx="55" cy="200" r="3" filter="url(#glow-svg)">
+                                    <animate attributeName="r" values="2;4;2" dur="0.7s" repeatCount="indefinite" />
+                                    <animate attributeName="fill" values="#a855f7;#3b82f6;#a855f7" dur="1.8s" repeatCount="indefinite" />
+                                </circle>
+                                <circle cx="35" cy="215" r="3" filter="url(#glow-svg)">
+                                    <animate attributeName="r" values="1.5;5;1.5" dur="1.5s" repeatCount="indefinite" />
+                                    <animate attributeName="fill" values="#a855f7;#3b82f6;#a855f7" dur="3s" repeatCount="indefinite" />
+                                </circle>
+                                <circle cx="45" cy="230" r="3" filter="url(#glow-svg)">
+                                    <animate attributeName="r" values="2;5.5;2" dur="1.1s" repeatCount="indefinite" />
+                                    <animate attributeName="fill" values="#a855f7;#3b82f6;#a855f7" dur="2.2s" repeatCount="indefinite" />
+                                </circle>
+                            </g>
+
+                            <!-- УЗЛЫ -->
+                            <g id="network-nodes-gan">
+                                <circle cx="130" cy="120" r="4" filter="url(#glow-svg)">
+                                    <animate attributeName="r" values="3;6;3" dur="2.1s" begin="0s" repeatCount="indefinite"/>
+                                    <animate attributeName="fill" values="#a855f7;#3b82f6;#a855f7" dur="3.5s" begin="0s" repeatCount="indefinite"/>
+                                </circle>
+                                <circle cx="130" cy="173" r="4" filter="url(#glow-svg)">
+                                    <animate attributeName="r" values="3;5;3" dur="2.4s" begin="-0.3s" repeatCount="indefinite"/>
+                                    <animate attributeName="fill" values="#a855f7;#3b82f6;#a855f7" dur="3.1s" begin="-1s" repeatCount="indefinite"/>
+                                </circle>
+                                <circle cx="130" cy="226" r="4" filter="url(#glow-svg)">
+                                    <animate attributeName="r" values="2;6;2" dur="1.8s" begin="-0.7s" repeatCount="indefinite"/>
+                                    <animate attributeName="fill" values="#a855f7;#3b82f6;#a855f7" dur="4.2s" begin="-0.5s" repeatCount="indefinite"/>
+                                </circle>
+                                <circle cx="130" cy="280" r="4" filter="url(#glow-svg)">
+                                    <animate attributeName="r" values="3;6;3" dur="2.5s" begin="-1.2s" repeatCount="indefinite"/>
+                                    <animate attributeName="fill" values="#a855f7;#3b82f6;#a855f7" dur="3.8s" begin="-2s" repeatCount="indefinite"/>
+                                </circle>
+                                <circle cx="200" cy="120" r="4" filter="url(#glow-svg)">
+                                    <animate attributeName="r" values="2;5;2" dur="2.2s" begin="-0.5s" repeatCount="indefinite"/>
+                                    <animate attributeName="fill" values="#a855f7;#3b82f6;#a855f7" dur="3.3s" begin="-0.8s" repeatCount="indefinite"/>
+                                </circle>
+                                <circle cx="200" cy="173" r="4" filter="url(#glow-svg)">
+                                    <animate attributeName="r" values="3;7;3" dur="2.0s" begin="-1.1s" repeatCount="indefinite"/>
+                                    <animate attributeName="fill" values="#a855f7;#3b82f6;#a855f7" dur="4.0s" begin="-1.5s" repeatCount="indefinite"/>
+                                </circle>
+                                <circle cx="200" cy="226" r="4" filter="url(#glow-svg)">
+                                    <animate attributeName="r" values="3;6;3" dur="2.6s" begin="-0.2s" repeatCount="indefinite"/>
+                                    <animate attributeName="fill" values="#a855f7;#3b82f6;#a855f7" dur="3.6s" begin="-0.4s" repeatCount="indefinite"/>
+                                </circle>
+                                <circle cx="200" cy="280" r="4" filter="url(#glow-svg)">
+                                    <animate attributeName="r" values="2;5;2" dur="1.9s" begin="-0.9s" repeatCount="indefinite"/>
+                                    <animate attributeName="fill" values="#a855f7;#3b82f6;#a855f7" dur="3.9s" begin="-2.2s" repeatCount="indefinite"/>
+                                </circle>
+                                <circle cx="270" cy="120" r="4" filter="url(#glow-svg)">
+                                    <animate attributeName="r" values="3;6;3" dur="2.3s" begin="-1.5s" repeatCount="indefinite"/>
+                                    <animate attributeName="fill" values="#a855f7;#3b82f6;#a855f7" dur="3.4s" begin="-1.1s" repeatCount="indefinite"/>
+                                </circle>
+                                <circle cx="270" cy="173" r="4" filter="url(#glow-svg)">
+                                    <animate attributeName="r" values="2;5;2" dur="2.1s" begin="-0.6s" repeatCount="indefinite"/>
+                                    <animate attributeName="fill" values="#a855f7;#3b82f6;#a855f7" dur="3.7s" begin="-0.3s" repeatCount="indefinite"/>
+                                </circle>
+                                <circle cx="270" cy="226" r="4" filter="url(#glow-svg)">
+                                    <animate attributeName="r" values="3;7;3" dur="2.5s" begin="-1.3s" repeatCount="indefinite"/>
+                                    <animate attributeName="fill" values="#a855f7;#3b82f6;#a855f7" dur="4.1s" begin="-1.8s" repeatCount="indefinite"/>
+                                </circle>
+                                <circle cx="270" cy="280" r="4" filter="url(#glow-svg)">
+                                    <animate attributeName="r" values="3;5;3" dur="1.7s" begin="-0.8s" repeatCount="indefinite"/>
+                                    <animate attributeName="fill" values="#a855f7;#3b82f6;#a855f7" dur="3.2s" begin="-0.7s" repeatCount="indefinite"/>
+                                </circle>
+                            </g>
+
+                            <!-- БЛОК "ИСКУССТВО" -->
+                            <g id="art-block-gan">
+                                <path d="M 345 230 L 330 270 M 345 230 L 360 270 M 345 230 L 345 260" stroke="#3b82f6" stroke-width="2" opacity="0.6" stroke-linecap="round"/>
+                                <rect x="315" y="145" width="60" height="85" rx="6" class="glass-canvas-gan" filter="url(#glow-svg)" />
+                                <path d="M 325 180 Q 345 150 365 180 T 355 210" fill="none" stroke="url(#neonGrad)" stroke-width="2">
+                                    <animate attributeName="stroke-dasharray" values="0 100; 100 0; 0 100" dur="4s" repeatCount="indefinite"/>
+                                </path>
+                                <circle cx="345" cy="185" r="10" fill="url(#neonGradRev)" opacity="0.6">
+                                    <animate attributeName="r" values="6; 14; 6" dur="3.5s" repeatCount="indefinite"/>
+                                    <animate attributeName="opacity" values="0.3; 0.9; 0.3" dur="3.5s" repeatCount="indefinite"/>
+                                </circle>
                             </g>
                         </svg>
                     </div>
