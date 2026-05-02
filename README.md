@@ -10,7 +10,7 @@
 
 ### 🌐 [Посетите наш сайт-визитку](https://zzzigrok.github.io/repin-2.0/)
 
-![Repin 2.1 Interface Preview](docs/assets/repin_v21_preview.png)
+![Repin 2.1 Interface Preview](docs/assets/interface_preview.png)
 
 ---
 
