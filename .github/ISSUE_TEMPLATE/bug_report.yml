@@ -1,0 +1,35 @@
+name: Bug Report
+description: Create a report to help us improve Repin 2.0
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Спасибо, что нашли время сообщить об ошибке! 🎨
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: Что произошло?
+      description: Опишите, что именно пошло не так.
+      placeholder: Например, программа вылетает при генерации 64 картинок.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Как воспроизвести?
+      description: Шаги для повторения ошибки.
+      placeholder: |
+        1. Запустить python cli.py
+        2. Выбрать пункт 2
+        3. Ввести 64
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Окружение
+      description: ОС, версия Python, наличие GPU (XPU/CUDA).
+      placeholder: Windows 11, Python 3.10, Intel Arc GPU.
+    validations:
+      required: true

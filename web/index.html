@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Repin 2.0 | Generative Digital Art Studio</title>
+    <meta name="description" content="Repin 2.0 - профессиональная GAN-студия для создания цифрового искусства. Генерация уникальных образов на базе нейросетей.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="glow-bg"></div>
+    
+    <header>
+        <nav class="container">
+            <div class="logo">
+                <img src="assets/logo.svg" alt="Repin Logo">
+                <span>Repin 2.0</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#features">Возможности</a></li>
+                <li><a href="#gallery">Галерея</a></li>
+                <li><a href="#terminal">Terminal</a></li>
+                <li><a href="https://github.com" class="btn-secondary">GitHub</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero container">
+            <div class="hero-content">
+                <h1 class="reveal">Генеративное искусство <span class="gradient-text">нового поколения</span></h1>
+                <p class="reveal delay-1">Repin 2.0 — это мощная GAN-студия, объединяющая передовые нейросетевые алгоритмы и высокую производительность для создания уникального цифрового контента.</p>
+                <div class="hero-btns reveal delay-2">
+                    <a href="#gallery" class="btn-primary">Исследовать галерею</a>
+                    <a href="#terminal" class="btn-outline">Попробовать CLI</a>
+                </div>
+            </div>
+            <div class="hero-visual reveal">
+                <div class="image-stack">
+                    <img src="assets/repin_batch_64_20260429_103556.png" alt="Generated Art 1" class="stack-img img-1">
+                    <img src="assets/repin_batch_64_20260428_141303.png" alt="Generated Art 2" class="stack-img img-2">
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features container">
+            <div class="section-header">
+                <h2 class="reveal">Почему Repin 2.0?</h2>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card reveal glass">
+                    <div class="icon">🚀</div>
+                    <h3>XPU Ускорение</h3>
+                    <p>Оптимизировано для Intel XPU и PyTorch 2.0+, обеспечивая молниеносную генерацию.</p>
+                </div>
+                <div class="feature-card reveal glass delay-1">
+                    <div class="icon">🎨</div>
+                    <h3>8x Upscaling</h3>
+                    <p>Алгоритмы масштабирования позволяют увеличивать детализацию без потери четкости.</p>
+                </div>
+                <div class="feature-card reveal glass delay-2">
+                    <div class="icon">💻</div>
+                    <h3>Rich CLI</h3>
+                    <p>Интуитивный и эстетичный интерфейс командной строки для полного контроля.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="gallery" class="gallery container">
+            <div class="section-header">
+                <h2 class="reveal">Галерея работ</h2>
+            </div>
+            <div class="gallery-grid">
+                <div class="gallery-item reveal glass">
+                    <img src="assets/repin_batch_16_20260428_141046.png" alt="Art Batch 1">
+                    <div class="overlay"><span>Batch v2.0-A</span></div>
+                </div>
+                <div class="gallery-item reveal glass delay-1">
+                    <img src="assets/repin_batch_16_20260428_141215.png" alt="Art Batch 2">
+                    <div class="overlay"><span>Batch v2.0-B</span></div>
+                </div>
+                <div class="gallery-item reveal glass delay-2">
+                    <img src="assets/repin_batch_32_20260428_141243.png" alt="Art Batch 3">
+                    <div class="overlay"><span>Batch v2.0-C</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="terminal" class="terminal-section container">
+            <div class="section-header">
+                <h2 class="reveal">Terminal Experience</h2>
+            </div>
+            <div class="terminal-window reveal glass">
+                <div class="terminal-header">
+                    <div class="dots">
+                        <span></span><span></span><span></span>
+                    </div>
+                    <div class="title">cli.py — Repin 2.0</div>
+                </div>
+                <div class="terminal-body" id="terminal-content">
+                    <div class="line"><span class="cmd">python</span> cli.py</div>
+                    <div class="line typing">Loading Repin 2.0 Core...</div>
+                    <div class="line typing delay-1">Device detected: <span class="cyan">XPU</span></div>
+                    <div class="line typing delay-2">Model weights loaded. Ready for generation.</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="container">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img src="assets/logo.svg" alt="Repin Logo">
+                <span>Repin 2.0</span>
+            </div>
+            <p>&copy; 2026 Repin Project. Все права защищены.</p>
+            <div class="socials">
+                <a href="#">GitHub</a>
+                <a href="#">Docs</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+</body>
+</html>

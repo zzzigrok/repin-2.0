@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%">
+  <defs>
+    <!-- Градиент для графического знака и текста -->
+    <linearGradient id="repin-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f2ff" />
+      <stop offset="100%" stop-color="#ff00ff" />
+    </linearGradient>
+    
+    <!-- Градиент для текста (горизонтальный) -->
+    <linearGradient id="text-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00f2ff" />
+      <stop offset="100%" stop-color="#ff00ff" />
+    </linearGradient>
+
+    <style>
+      /* Базовый стиль мазка кисти (буква R) */
+      .brush {
+        fill: none;
+        stroke: url(#repin-grad);
+        stroke-width: 4.5;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      /* Стили и анимация для линий нейросети (эффект потока данных) */
+      .net-line {
+        fill: none;
+        stroke: url(#repin-grad);
+        stroke-width: 1.5;
+        stroke-linecap: round;
+        stroke-dasharray: 30;
+        animation: drawLine 4s infinite cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      /* Задержки для линий, чтобы анимация выглядела органично */
+      .nl-1 { animation-delay: 0s; }
+      .nl-2 { animation-delay: 0.3s; }
+      .nl-3 { animation-delay: 0.6s; }
+      .nl-4 { animation-delay: 0.9s; }
+      .nl-5 { animation-delay: 1.2s; }
+      .nl-6 { animation-delay: 1.5s; }
+      .nl-7 { animation-delay: 1.8s; }
+
+      @keyframes drawLine {
+        0% { stroke-dashoffset: 30; opacity: 0; }
+        15%, 85% { opacity: 1; }
+        40%, 60% { stroke-dashoffset: 0; }
+        100% { stroke-dashoffset: -30; opacity: 0; }
+      }
+
+      /* Стили и анимация пульсации узлов нейросети */
+      .node {
+        fill: url(#repin-grad);
+        animation: pulseNode 1.5s infinite alternate ease-in-out;
+      }
+
+      /* Разные задержки для узлов */
+      .nd-1 { animation-delay: 0s; }
+      .nd-2 { animation-delay: 0.4s; }
+      .nd-3 { animation-delay: 0.8s; }
+      .nd-4 { animation-delay: 1.2s; }
+      .nd-5 { animation-delay: 1.6s; }
+      .nd-6 { animation-delay: 2.0s; }
+
+      @keyframes pulseNode {
+        0% { opacity: 0.4; }
+        100% { opacity: 1; }
+      }
+
+      /* Типографика */
+      .logo-text {
+        font-family: 'Inter', 'Montserrat', 'Helvetica Neue', 'Segoe UI', sans-serif;
+        font-weight: 800;
+        font-size: 11px;
+        letter-spacing: 0.15em;
+        fill: url(#text-grad);
+        text-anchor: middle;
+      }
+    </style>
+  </defs>
+
+  <!-- Линии нейронной сети (GAN) -->
+  <path class="net-line nl-1" d="M 39,42 L 56,50" />
+  <path class="net-line nl-2" d="M 39,42 L 46,62" />
+  <path class="net-line nl-3" d="M 56,50 L 66,45" />
+  <path class="net-line nl-4" d="M 56,50 L 62,65" />
+  <path class="net-line nl-5" d="M 46,62 L 62,65" />
+  <path class="net-line nl-6" d="M 66,45 L 76,58" />
+  <path class="net-line nl-7" d="M 62,65 L 76,58" />
+
+  <!-- Классический элемент: стилизованный мазок кисти, формирующий букву R -->
+  <path class="brush" d="M 26,60 C 29,45 26,25 30,15 C 49,12 59,28 44,40 C 39,43 32,40 27,38" />
+
+  <!-- Узлы нейронной сети -->
+  <circle class="node nd-1" cx="39" cy="42" r="2.5" />
+  <circle class="node nd-2" cx="56" cy="50" r="2.5" />
+  <circle class="node nd-3" cx="46" cy="62" r="2.5" />
+  <circle class="node nd-4" cx="66" cy="45" r="2.5" />
+  <circle class="node nd-5" cx="62" cy="65" r="2.5" />
+  <circle class="node nd-6" cx="76" cy="58" r="2.5" />
+
+  <!-- Название проекта -->
+  <!-- Смещение x="51.5" компенсирует letter-spacing для идеального центрирования -->
+  <text x="51.5" y="88" class="logo-text">REPIN 2.0</text>
+</svg>

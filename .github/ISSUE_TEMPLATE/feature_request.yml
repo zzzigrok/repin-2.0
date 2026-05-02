@@ -1,0 +1,23 @@
+name: Feature Request
+description: Suggest an idea for Repin 2.0
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Есть крутая идея для проекта? Расскажите нам! 🚀
+  - type: textarea
+    id: idea
+    attributes:
+      label: Ваше предложение
+      description: Какую функцию вы хотели бы видеть?
+      placeholder: Например, поддержку CIFAR-10 или сохранение в формате TIFF.
+    validations:
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Почему это важно?
+      description: Как это поможет пользователям?
+    validations:
+      required: true
