@@ -177,15 +177,15 @@ def train_model(num_epochs):
                 current_batch_size = images.size(0)
                 images = images.view(current_batch_size, -1).to(device, non_blocking=True)
                 
-                real_labels = torch.ones(current_batch_size, 1).to(device)
-                fake_labels = torch.zeros(current_batch_size, 1).to(device)
+                real_labels = torch.ones(current_batch_size, 1, device=device)
+                fake_labels = torch.zeros(current_batch_size, 1, device=device)
                 
                 # --- Discriminator ---
                 with torch.autocast(device_type=device_type, dtype=dtype):
                     outputs = D(images)
                     d_loss_real = criterion(outputs, real_labels)
                     
-                    z = torch.randn(current_batch_size, latent_size).to(device)
+                    z = torch.randn(current_batch_size, latent_size, device=device)
                     fake_images = G(z)
                     outputs = D(fake_images.detach())
                     d_loss_fake = criterion(outputs, fake_labels)
@@ -198,7 +198,7 @@ def train_model(num_epochs):
                 
                 # --- Generator ---
                 with torch.autocast(device_type=device_type, dtype=dtype):
-                    z = torch.randn(current_batch_size, latent_size).to(device)
+                    z = torch.randn(current_batch_size, latent_size, device=device)
                     fake_images = G(z)
                     outputs = D(fake_images)
                     g_loss = criterion(outputs, real_labels)
@@ -236,7 +236,7 @@ def generate_images(batch_size):
     G.eval()
     
     with console.status(f"[bold cyan]Генерация батча из {batch_size} изображений...", spinner="aesthetic"):
-        z = torch.randn(batch_size, latent_size).to(device)
+        z = torch.randn(batch_size, latent_size, device=device)
         
         with torch.no_grad(), torch.autocast(device_type=device_type, dtype=dtype):
             generated_flat = G(z)
@@ -288,7 +288,7 @@ def benchmark_batches():
     
     G = Generator().to(device)
     G.eval()
-    z = torch.randn(batch_size, latent_size).to(device)
+    z = torch.randn(batch_size, latent_size, device=device)
     
     console.print(f"\n[yellow]Запуск бенчмарка (Device: {device_type.upper()}, Batch: {batch_size}, Iters: {num_iters})...[/yellow]")
     
@@ -362,7 +362,7 @@ def debug_menu():
         elif choice == "0": break
 
 # --- 6. СПРАВКА ---
-def show_help():
+def show_help():    
     print_header()
     table = Table(title="Справка по Repin 2.0 CLI", show_header=True, header_style="bold magenta")
     table.add_column("Команда", style="cyan")
