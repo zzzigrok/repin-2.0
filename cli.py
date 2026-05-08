@@ -362,20 +362,21 @@ def debug_menu():
         elif choice == "0": break
 
 # --- 6. СПРАВКА ---
-    print_header()
-    table = Table(title="Справка по Repin 2.0 CLI", show_header=True, header_style="bold magenta")
-    table.add_column("Команда", style="cyan")
-    table.add_column("Описание", style="green")
+def show_help():
+        print_header()
+        table = Table(title="Справка по Repin 2.0 CLI", show_header=True, header_style="bold magenta")
+        table.add_column("Команда", style="cyan")
+        table.add_column("Описание", style="green")
     
-    table.add_row("--help", "Показать это сообщение")
-    table.add_row("Поддержка", "CUDA, XPU (Intel), MPS (Apple Silicon), CPU")
-    table.add_row("Меню [1]", "Режим обучения GAN модели на MNIST")
-    table.add_row("Меню [2]", "Генерация новых арт-объектов на основе обученных весов")
-    table.add_row("Меню [3]", "Debug Menu: Инспекция и Бенчмарки")
-    table.add_row("Меню [0]", "Выход из приложения")
+        table.add_row("--help", "Показать это сообщение")
+        table.add_row("Поддержка", "CUDA, XPU (Intel), MPS (Apple Silicon), CPU")
+        table.add_row("Меню [1]", "Режим обучения GAN модели на MNIST")
+        table.add_row("Меню [2]", "Генерация новых арт-объектов на основе обученных весов")
+        table.add_row("Меню [3]", "Debug Menu: Инспекция и Бенчмарки")
+        table.add_row("Меню [0]", "Выход из приложения")
     
-    console.print(table)
-    console.print("\n[dim]Для запуска в интерактивном режиме просто выполните: python cli.py[/dim]")
+        console.print(table)
+        console.print("\n[dim]Для запуска в интерактивном режиме просто выполните: python cli.py[/dim]")
 
 # --- 5. ГЛАВНЫЙ ЦИКЛ ПРОГРАММЫ ---
 def main():
