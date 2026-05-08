@@ -362,6 +362,7 @@ def debug_menu():
         elif choice == "0": break
 
 # --- 6. СПРАВКА ---
+def show_help():
     print_header()
     table = Table(title="Справка по Repin 2.0 CLI", show_header=True, header_style="bold magenta")
     table.add_column("Команда", style="cyan")
@@ -376,6 +377,7 @@ def debug_menu():
     
     console.print(table)
     console.print("\n[dim]Для запуска в интерактивном режиме просто выполните: python cli.py[/dim]")
+    input("\nНажмите Enter, чтобы вернуться в меню...")
 
 # --- 5. ГЛАВНЫЙ ЦИКЛ ПРОГРАММЫ ---
 def main():
