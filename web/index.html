@@ -550,6 +550,237 @@
         </div>
     </section>
 
+
+    <!-- Раздел "Архитектура модели" -->
+    <section id="architecture" class="py-20 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 fade-in-section">
+                <h2 class="text-3xl font-extrabold text-white sm:text-4xl">
+                    Анатомия <span class="text-gradient">Нейросети</span>
+                </h2>
+                <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-400">
+                    Интерактивный взгляд внутрь архитектуры Generative Adversarial Network.
+                </p>
+            </div>
+
+            <!-- Общая архитектура GAN -->
+            <div class="glass-card rounded-2xl p-8 mb-12 fade-in-section">
+                <h3 class="text-2xl font-bold text-white mb-6 text-center">Полный цикл GAN</h3>
+                <div class="w-full aspect-[21/9] md:aspect-[3/1] relative overflow-hidden rounded-xl border border-white/5 bg-gray-900/50 flex items-center justify-center">
+                    <!-- SVG для GAN -->
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 250" class="w-full h-full max-w-4xl">
+                        <defs>
+                            <linearGradient id="ganGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#a855f7" />
+                                <stop offset="50%" stop-color="#3b82f6" />
+                                <stop offset="100%" stop-color="#ec4899" />
+                            </linearGradient>
+                            <filter id="ganGlow" x="-20%" y="-20%" width="140%" height="140%">
+                                <feGaussianBlur stdDeviation="4" result="blur" />
+                                <feMerge>
+                                    <feMergeNode in="blur" />
+                                    <feMergeNode in="SourceGraphic" />
+                                </feMerge>
+                            </filter>
+                            <pattern id="dotPattern" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                                <circle cx="2" cy="2" r="1" fill="#ffffff" opacity="0.1"/>
+                            </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#dotPattern)" />
+
+                        <!-- Генератор -->
+                        <g transform="translate(150, 125)">
+                            <polygon points="-40,-50 40,-80 40,80 -40,50" fill="rgba(168, 85, 247, 0.1)" stroke="#a855f7" stroke-width="2" filter="url(#ganGlow)" />
+                            <text x="0" y="5" fill="#fff" font-size="14" font-weight="bold" text-anchor="middle" dominant-baseline="middle">ГЕНЕРАТОР</text>
+
+                            <!-- Вход шума -->
+                            <path d="M -120 0 L -40 0" stroke="#a855f7" stroke-width="2" stroke-dasharray="5 5">
+                                <animate attributeName="stroke-dashoffset" from="10" to="0" dur="0.5s" repeatCount="indefinite" />
+                            </path>
+                            <circle cx="-120" cy="0" r="15" fill="rgba(168, 85, 247, 0.3)" stroke="#a855f7" stroke-width="2" filter="url(#ganGlow)">
+                                <animate attributeName="r" values="12;18;12" dur="2s" repeatCount="indefinite"/>
+                            </circle>
+                            <text x="-120" y="-25" fill="#a855f7" font-size="12" font-weight="bold" text-anchor="middle">Z (Шум)</text>
+                        </g>
+
+                        <!-- Изображения -->
+                        <g transform="translate(400, 125)">
+                            <!-- Fake Image -->
+                            <rect x="-30" y="-80" width="60" height="60" rx="4" fill="rgba(59, 130, 246, 0.1)" stroke="#3b82f6" stroke-width="2" filter="url(#ganGlow)" />
+                            <text x="0" y="-45" fill="#3b82f6" font-size="12" text-anchor="middle">Fake</text>
+                            <path d="M -210 -40 L -30 -50" stroke="#3b82f6" stroke-width="2" opacity="0.5">
+                                <animate attributeName="opacity" values="0.2;0.8;0.2" dur="1.5s" repeatCount="indefinite"/>
+                            </path>
+
+                            <!-- Real Image -->
+                            <rect x="-30" y="20" width="60" height="60" rx="4" fill="rgba(236, 72, 153, 0.1)" stroke="#ec4899" stroke-width="2" filter="url(#ganGlow)" />
+                            <text x="0" y="55" fill="#ec4899" font-size="12" text-anchor="middle">Real</text>
+                            <circle cx="-120" cy="50" r="15" fill="rgba(236, 72, 153, 0.3)" stroke="#ec4899" stroke-width="2" filter="url(#ganGlow)">
+                                <animate attributeName="r" values="12;18;12" dur="2s" repeatCount="indefinite" begin="1s"/>
+                            </circle>
+                            <text x="-120" y="85" fill="#ec4899" font-size="12" font-weight="bold" text-anchor="middle">Dataset</text>
+                            <path d="M -105 50 L -30 50" stroke="#ec4899" stroke-width="2" stroke-dasharray="5 5">
+                                <animate attributeName="stroke-dashoffset" from="10" to="0" dur="0.5s" repeatCount="indefinite" />
+                            </path>
+                        </g>
+
+                        <!-- Дискриминатор -->
+                        <g transform="translate(600, 125)">
+                            <polygon points="-40,-80 40,-30 40,30 -40,80" fill="rgba(59, 130, 246, 0.1)" stroke="#3b82f6" stroke-width="2" filter="url(#ganGlow)" />
+                            <text x="0" y="5" fill="#fff" font-size="12" font-weight="bold" text-anchor="middle" dominant-baseline="middle" transform="rotate(-90 0 0)">ДИСКРИМИНАТОР</text>
+
+                            <!-- Связи от картинок -->
+                            <path d="M -170 -50 L -40 -30" stroke="#3b82f6" stroke-width="2" opacity="0.6">
+                                <animate attributeName="stroke-width" values="1;3;1" dur="1.2s" repeatCount="indefinite"/>
+                            </path>
+                            <path d="M -170 50 L -40 30" stroke="#ec4899" stroke-width="2" opacity="0.6">
+                                <animate attributeName="stroke-width" values="1;3;1" dur="1.2s" repeatCount="indefinite" begin="0.6s"/>
+                            </path>
+
+                            <!-- Выход (Оценка) -->
+                            <path d="M 40 0 L 100 0" stroke="url(#ganGrad)" stroke-width="3" />
+                            <circle cx="100" cy="0" r="10" fill="#fff" filter="url(#ganGlow)">
+                                <animate attributeName="opacity" values="0.5;1;0.5" dur="1s" repeatCount="indefinite"/>
+                            </circle>
+                            <text x="100" y="-20" fill="#fff" font-size="12" font-weight="bold" text-anchor="middle">Score (0-1)</text>
+                        </g>
+
+                        <!-- Обратное распространение ошибки (Backpropagation) -->
+                        <path d="M 700 30 Q 700 220 400 220 Q 150 220 150 80" fill="none" stroke="#ef4444" stroke-width="2" stroke-dasharray="10 10" opacity="0.6">
+                            <animate attributeName="stroke-dashoffset" from="0" to="-20" dur="0.8s" repeatCount="indefinite" />
+                        </path>
+                        <text x="400" y="240" fill="#ef4444" font-size="12" text-anchor="middle">Обучение (Gradient Descent)</text>
+
+                        <!-- Бегущие частицы данных -->
+                        <circle cx="0" cy="0" r="3" fill="#fff" filter="url(#ganGlow)">
+                            <animateMotion dur="2s" repeatCount="indefinite" path="M 30 125 L 110 125" />
+                        </circle>
+                        <circle cx="0" cy="0" r="3" fill="#fff" filter="url(#ganGlow)">
+                            <animateMotion dur="1.5s" repeatCount="indefinite" path="M 190 125 L 370 75" />
+                        </circle>
+                        <circle cx="0" cy="0" r="3" fill="#fff" filter="url(#ganGlow)">
+                            <animateMotion dur="1.5s" repeatCount="indefinite" path="M 295 175 L 370 175" />
+                        </circle>
+                        <circle cx="0" cy="0" r="3" fill="#fff" filter="url(#ganGlow)">
+                            <animateMotion dur="1.2s" repeatCount="indefinite" path="M 430 75 L 560 95" />
+                        </circle>
+                        <circle cx="0" cy="0" r="3" fill="#fff" filter="url(#ganGlow)">
+                            <animateMotion dur="1.2s" repeatCount="indefinite" path="M 430 175 L 560 155" />
+                        </circle>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Детальные компоненты (Генератор и Дискриминатор) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                <!-- Генератор (Upsampling) -->
+                <div class="glass-card rounded-2xl p-8 fade-in-section" style="transition-delay: 0.1s;">
+                    <h3 class="text-xl font-bold text-purple-400 mb-4 flex items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        Генератор (Upsampling)
+                    </h3>
+                    <p class="text-sm text-gray-400 mb-6">Преобразует случайный шум в осмысленное изображение через серию транспонированных сверток.</p>
+                    <div class="w-full aspect-[4/3] relative overflow-hidden rounded-xl border border-white/5 bg-gray-900/50 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" class="w-full h-full">
+                            <defs>
+                                <filter id="genGlow" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feGaussianBlur stdDeviation="3" result="blur" />
+                                    <feMerge>
+                                        <feMergeNode in="blur" />
+                                        <feMergeNode in="SourceGraphic" />
+                                    </feMerge>
+                                </filter>
+                            </defs>
+
+                            <!-- Layers -->
+                            <!-- Vector Z -->
+                            <rect x="40" y="130" width="10" height="40" fill="#a855f7" filter="url(#genGlow)">
+                                <animate attributeName="opacity" values="0.4;1;0.4" dur="1.5s" repeatCount="indefinite"/>
+                            </rect>
+
+                            <!-- Dense/Reshape -->
+                            <rect x="100" y="110" width="20" height="80" fill="rgba(168, 85, 247, 0.4)" stroke="#a855f7" stroke-width="1.5" />
+                            <path d="M 50 150 L 100 150" stroke="#a855f7" stroke-width="1" stroke-dasharray="3 3"/>
+
+                            <!-- ConvT 1 -->
+                            <rect x="170" y="80" width="30" height="140" fill="rgba(168, 85, 247, 0.3)" stroke="#a855f7" stroke-width="1.5" />
+                            <path d="M 120 110 L 170 80 M 120 190 L 170 220" stroke="#a855f7" stroke-width="1" opacity="0.5"/>
+
+                            <!-- ConvT 2 -->
+                            <rect x="250" y="50" width="40" height="200" fill="rgba(168, 85, 247, 0.2)" stroke="#a855f7" stroke-width="1.5" />
+                            <path d="M 200 80 L 250 50 M 200 220 L 250 250" stroke="#a855f7" stroke-width="1" opacity="0.5"/>
+
+                            <!-- Output Image -->
+                            <rect x="340" y="30" width="20" height="240" fill="rgba(168, 85, 247, 0.1)" stroke="#a855f7" stroke-width="2" filter="url(#genGlow)" />
+                            <path d="M 290 50 L 340 30 M 290 250 L 340 270" stroke="#a855f7" stroke-width="1" opacity="0.5"/>
+
+                            <!-- Animated data flow dots -->
+                            <g fill="#fff" filter="url(#genGlow)">
+                                <circle cx="0" cy="0" r="2"><animateMotion dur="2s" repeatCount="indefinite" path="M 50 150 L 100 150" /></circle>
+                                <circle cx="0" cy="0" r="2"><animateMotion dur="2s" repeatCount="indefinite" path="M 120 150 L 170 150" /></circle>
+                                <circle cx="0" cy="0" r="2"><animateMotion dur="2s" repeatCount="indefinite" path="M 200 150 L 250 150" /></circle>
+                                <circle cx="0" cy="0" r="2"><animateMotion dur="2s" repeatCount="indefinite" path="M 290 150 L 340 150" /></circle>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Дискриминатор (Downsampling) -->
+                <div class="glass-card rounded-2xl p-8 fade-in-section" style="transition-delay: 0.2s;">
+                    <h3 class="text-xl font-bold text-blue-400 mb-4 flex items-center gap-2">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.956 11.956 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        Дискриминатор (Downsampling)
+                    </h3>
+                    <p class="text-sm text-gray-400 mb-6">Сжимает изображение через слои свертки для оценки вероятности его подлинности (0 до 1).</p>
+                    <div class="w-full aspect-[4/3] relative overflow-hidden rounded-xl border border-white/5 bg-gray-900/50 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" class="w-full h-full">
+                            <defs>
+                                <filter id="discGlow" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feGaussianBlur stdDeviation="3" result="blur" />
+                                    <feMerge>
+                                        <feMergeNode in="blur" />
+                                        <feMergeNode in="SourceGraphic" />
+                                    </feMerge>
+                                </filter>
+                            </defs>
+
+                            <!-- Input Image -->
+                            <rect x="40" y="30" width="20" height="240" fill="rgba(59, 130, 246, 0.1)" stroke="#3b82f6" stroke-width="2" filter="url(#discGlow)" />
+
+                            <!-- Conv 1 -->
+                            <rect x="110" y="50" width="40" height="200" fill="rgba(59, 130, 246, 0.2)" stroke="#3b82f6" stroke-width="1.5" />
+                            <path d="M 60 30 L 110 50 M 60 270 L 110 250" stroke="#3b82f6" stroke-width="1" opacity="0.5"/>
+
+                            <!-- Conv 2 -->
+                            <rect x="200" y="80" width="30" height="140" fill="rgba(59, 130, 246, 0.3)" stroke="#3b82f6" stroke-width="1.5" />
+                            <path d="M 150 50 L 200 80 M 150 250 L 200 220" stroke="#3b82f6" stroke-width="1" opacity="0.5"/>
+
+                            <!-- Dense -->
+                            <rect x="280" y="110" width="20" height="80" fill="rgba(59, 130, 246, 0.4)" stroke="#3b82f6" stroke-width="1.5" />
+                            <path d="M 230 80 L 280 110 M 230 220 L 280 190" stroke="#3b82f6" stroke-width="1" opacity="0.5"/>
+
+                            <!-- Output Score -->
+                            <circle cx="350" cy="150" r="10" fill="#3b82f6" filter="url(#discGlow)">
+                                <animate attributeName="opacity" values="0.4;1;0.4" dur="1s" repeatCount="indefinite"/>
+                            </circle>
+                            <path d="M 300 150 L 340 150" stroke="#3b82f6" stroke-width="2" stroke-dasharray="3 3"/>
+
+                            <!-- Animated data flow dots -->
+                            <g fill="#fff" filter="url(#discGlow)">
+                                <circle cx="0" cy="0" r="2"><animateMotion dur="1.5s" repeatCount="indefinite" path="M 60 150 L 110 150" /></circle>
+                                <circle cx="0" cy="0" r="2"><animateMotion dur="1.5s" repeatCount="indefinite" path="M 150 150 L 200 150" /></circle>
+                                <circle cx="0" cy="0" r="2"><animateMotion dur="1.5s" repeatCount="indefinite" path="M 230 150 L 280 150" /></circle>
+                                <circle cx="0" cy="0" r="2"><animateMotion dur="1.5s" repeatCount="indefinite" path="M 300 150 L 340 150" /></circle>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
     <!-- Раздел "Галерея шедевров" (Showcase) -->
     <section id="showcase" class="py-20 relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
