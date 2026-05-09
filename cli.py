@@ -299,8 +299,6 @@ def benchmark_batches():
     if device_type == 'cuda': torch.cuda.synchronize()
     elif device_type == 'xpu': torch.xpu.synchronize()
     
-    start_time = time.time()
-    
     with Progress(
         SpinnerColumn(),
         TextColumn("[progress.description]{task.description}"),
@@ -310,16 +308,20 @@ def benchmark_batches():
         transient=True
     ) as progress:
         task = progress.add_task("[cyan]Тестирование...", total=num_iters)
+        update_interval = max(1, num_iters // 10)
         
+        start_time = time.time()
         with torch.no_grad(), torch.autocast(device_type=device_type, dtype=dtype):
-            for _ in range(num_iters):
+            for i in range(1, num_iters + 1):
                 _ = G(z)
-                progress.update(task, advance=1)
-                
-    if device_type == 'cuda': torch.cuda.synchronize()
-    elif device_type == 'xpu': torch.xpu.synchronize()
-    
-    end_time = time.time()
+                if i % update_interval == 0:
+                    progress.update(task, completed=i)
+
+        if device_type == 'cuda': torch.cuda.synchronize()
+        elif device_type == 'xpu': torch.xpu.synchronize()
+        end_time = time.time()
+
+        progress.update(task, completed=num_iters)
     total_time = end_time - start_time
     avg_latency = (total_time / num_iters) * 1000
     samples_per_sec = (batch_size * num_iters) / total_time
