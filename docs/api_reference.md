@@ -49,7 +49,47 @@ else:
 
 ---
 
+
 ## 🧠 Классы нейронных сетей
+
+### `Generator`
+Класс генератора (наследует `nn.Module`).
+
+```python
+class Generator(nn.Module):
+    def __init__(self, latent_size, hidden_size, image_size): ...
+    def forward(self, x): ...
+```
+
+**Пример использования в коде:**
+```python
+# Инициализация
+gen = Generator(latent_size=64, hidden_size=256, image_size=784).to(device)
+# Создание батча случайного шума (например, 16 картинок)
+noise = torch.randn(16, 64, device=device)
+# Получение сырых тензоров изображений
+fake_images = gen(noise)
+# fake_images.shape будет [16, 784]
+```
+
+### `Discriminator`
+Класс дискриминатора (наследует `nn.Module`).
+
+```python
+class Discriminator(nn.Module):
+    def __init__(self, image_size, hidden_size): ...
+    def forward(self, x): ...
+```
+
+**Пример использования в коде:**
+```python
+# Инициализация
+disc = Discriminator(image_size=784, hidden_size=256).to(device)
+# Оценка картинок (fake_images из примера выше)
+predictions = disc(fake_images)
+# predictions.shape будет [16, 1], значения от 0.0 до 1.0
+```
+
 
 ### `class Generator(nn.Module)`
 
