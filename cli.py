@@ -28,9 +28,8 @@ if sys.platform == "win32":
 from rich.console import Console, Group
 from rich.panel import Panel
 from rich.prompt import Prompt, IntPrompt
-from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeElapsedColumn, TimeRemainingColumn
+from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeElapsedColumn
 from rich.table import Table
-from rich import print as rprint
 from rich.align import Align
 from rich import box
 
@@ -362,7 +361,7 @@ def debug_menu():
         elif choice == "0": break
 
 # --- 6. СПРАВКА ---
-def show_help():
+def show_help():    
     print_header()
     table = Table(title="Справка по Repin 2.0 CLI", show_header=True, header_style="bold magenta")
     table.add_column("Команда", style="cyan")
@@ -377,6 +376,7 @@ def show_help():
     
     console.print(table)
     console.print("\n[dim]Для запуска в интерактивном режиме просто выполните: python cli.py[/dim]")
+    input("\nНажмите Enter, чтобы вернуться в меню...")
 
 # --- 5. ГЛАВНЫЙ ЦИКЛ ПРОГРАММЫ ---
 def main():
