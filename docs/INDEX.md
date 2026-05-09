@@ -21,7 +21,10 @@
 ### Для разработчиков
 10. [📝 История изменений](CHANGELOG.md) — все версии и релизы проекта.
 11. [🤝 Руководство контрибьютора](CONTRIBUTING.md) — как внести вклад в проект.
-12. [📚 Глоссарий](#-глоссарий) — основные термины и понятия.
+12. [❓ FAQ](faq.md) — часто задаваемые вопросы.
+13. [🌟 Лучшие практики](best_practices.md) — советы по настройке и использованию.
+14. [🔌 Интеграция](integration.md) — примеры интеграции с ботами и API.
+15. [📚 Глоссарий](#-глоссарий) — основные термины и понятия.
 
 ---
 
@@ -138,6 +141,9 @@ flowchart LR
     GENGUIDE["🖼 Генерация"]
     CHANGE["📝 Changelog"]
     CONTRIB["🤝 Contributing"]
+    FAQ["❓ FAQ"]
+    BEST["🌟 Лучшие практики"]
+    INTEG["🔌 Интеграция"]
 
     INDEX --> ARCH
     INDEX --> USAGE
@@ -150,6 +156,9 @@ flowchart LR
     TUTS --> GENGUIDE
     INDEX --> CHANGE
     INDEX --> CONTRIB
+    INDEX --> FAQ
+    INDEX --> BEST
+    INDEX --> INTEG
 
     style INDEX fill:#1a1a2e,stroke:#00e5ff,color:#fff
     style TUTS fill:#1a2e1a,stroke:#00ff88,color:#fff
