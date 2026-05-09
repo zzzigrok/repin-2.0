@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 550" width="100%" height="100%">
+    <defs>
+        <linearGradient id="genGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#00ff88" />
+            <stop offset="100%" stop-color="#00b8ff" />
+        </linearGradient>
+        <linearGradient id="discGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ff4b2b" />
+            <stop offset="100%" stop-color="#ff416c" />
+        </linearGradient>
+        <filter id="glow">
+            <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+            <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+        <style>
+            .text-title { font-family: 'Inter', sans-serif; font-size: 28px; font-weight: 800; fill: #ffffff; }
+            .text-sub { font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500; fill: #a0aec0; }
+            .text-layer { font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 600; fill: #ffffff; text-anchor: middle; }
+            .box-gen { fill: rgba(0, 255, 136, 0.1); stroke: url(#genGrad); stroke-width: 2; rx: 12; transition: all 0.3s; }
+            .box-disc { fill: rgba(255, 75, 43, 0.1); stroke: url(#discGrad); stroke-width: 2; rx: 12; transition: all 0.3s; }
+            .box-data { fill: rgba(255, 255, 255, 0.05); stroke: #4a5568; stroke-width: 2; rx: 12; stroke-dasharray: 4; }
+            .connection { fill: none; stroke: #4a5568; stroke-width: 2; stroke-dasharray: 6; animation: flow 1s linear infinite; }
+            .connection-gen { fill: none; stroke: url(#genGrad); stroke-width: 3; opacity: 0.8; }
+            .connection-disc { fill: none; stroke: url(#discGrad); stroke-width: 3; opacity: 0.8; }
+            @keyframes flow {
+                to { stroke-dashoffset: -12; }
+            }
+            .pulse { animation: pulseAnim 2s infinite alternate; }
+            @keyframes pulseAnim {
+                from { filter: drop-shadow(0 0 5px rgba(0, 255, 136, 0.4)); }
+                to { filter: drop-shadow(0 0 15px rgba(0, 255, 136, 0.8)); }
+            }
+            .pulse-disc { animation: pulseDiscAnim 2s infinite alternate; }
+            @keyframes pulseDiscAnim {
+                from { filter: drop-shadow(0 0 5px rgba(255, 75, 43, 0.4)); }
+                to { filter: drop-shadow(0 0 15px rgba(255, 75, 43, 0.8)); }
+            }
+        </style>
+    </defs>
+
+    <!-- Background Pattern -->
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+    </pattern>
+    <rect width="1000" height="550" fill="url(#grid)" />
+
+    <!-- Containers -->
+    <rect x="50" y="50" width="400" height="420" rx="20" fill="rgba(26, 46, 26, 0.3)" stroke="url(#genGrad)" stroke-width="1" stroke-opacity="0.4" />
+    <text x="250" y="95" class="text-title" text-anchor="middle" filter="url(#glow)" fill="#00ff88">Генератор (G)</text>
+    
+    <rect x="550" y="50" width="400" height="420" rx="20" fill="rgba(46, 26, 26, 0.3)" stroke="url(#discGrad)" stroke-width="1" stroke-opacity="0.4" />
+    <text x="750" y="95" class="text-title" text-anchor="middle" filter="url(#glow)" fill="#ff4b2b">Дискриминатор (D)</text>
+
+    <!-- Generator -->
+    <rect x="100" y="140" width="300" height="45" class="box-data" />
+    <text x="250" y="168" class="text-layer">Шум z ∈ ℝ⁶⁴</text>
+
+    <path d="M 250 185 L 250 220" class="connection-gen" />
+
+    <rect x="100" y="220" width="300" height="45" class="box-gen pulse" />
+    <text x="250" y="248" class="text-layer">Linear (64 → 256) + ReLU</text>
+
+    <path d="M 250 265 L 250 300" class="connection-gen" />
+
+    <rect x="100" y="300" width="300" height="45" class="box-gen pulse" />
+    <text x="250" y="328" class="text-layer">Linear (256 → 512) + ReLU</text>
+
+    <path d="M 250 345 L 250 380" class="connection-gen" />
+
+    <rect x="100" y="380" width="300" height="45" class="box-gen pulse" />
+    <text x="250" y="408" class="text-layer">Linear (512 → 784) + Tanh</text>
+
+    <!-- Discriminator -->
+    <rect x="600" y="140" width="300" height="45" class="box-data" />
+    <text x="750" y="168" class="text-layer">Вход x ∈ ℝ⁷⁸⁴</text>
+
+    <path d="M 750 185 L 750 220" class="connection-disc" />
+
+    <rect x="600" y="220" width="300" height="45" class="box-disc pulse-disc" />
+    <text x="750" y="248" class="text-layer">Linear (784 → 512) + LeakyReLU</text>
+
+    <path d="M 750 265 L 750 300" class="connection-disc" />
+
+    <rect x="600" y="300" width="300" height="45" class="box-disc pulse-disc" />
+    <text x="750" y="328" class="text-layer">Linear (512 → 256) + LeakyReLU</text>
+
+    <path d="M 750 345 L 750 380" class="connection-disc" />
+
+    <rect x="600" y="380" width="300" height="45" class="box-disc pulse-disc" />
+    <text x="750" y="408" class="text-layer">Linear (256 → 1) + Sigmoid</text>
+
+    <!-- Real Image Source -->
+    <rect x="425" y="60" width="150" height="35" class="box-data" />
+    <text x="500" y="82" class="text-sub" text-anchor="middle" fill="#fff">Real Image</text>
+
+    <!-- Connections -->
+    <!-- Gen to Disc -->
+    <path d="M 400 402.5 C 475 402.5, 475 162.5, 600 162.5" class="connection" />
+    <circle cx="600" cy="162.5" r="4" fill="#a0aec0" />
+    <text x="500" y="270" class="text-sub" text-anchor="middle" fill="#00ff88">Fake Image</text>
+
+    <!-- Real to Disc -->
+    <path d="M 500 95 L 500 162.5 L 600 162.5" class="connection" />
+
+    <!-- Output Disc -->
+    <path d="M 750 425 L 750 460" class="connection-disc" />
+    <rect x="600" y="460" width="300" height="45" class="box-data" />
+    <text x="750" y="488" class="text-layer">Вероятность p ∈ [0, 1]</text>
+    
+    <!-- Gradients Feedback -->
+    <path d="M 600 482.5 L 500 482.5 L 500 520 L 250 520 L 250 425" class="connection" stroke="#ffcc00" />
+    <text x="500" y="540" class="text-sub" text-anchor="middle" fill="#ffcc00">BCELoss &amp; Backpropagation</text>
+    
+</svg>
