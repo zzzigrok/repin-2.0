@@ -132,3 +132,46 @@ async def generate_art_endpoint():
 
 # Запуск: uvicorn main:app --reload
 ```
+
+---
+
+## 🏗 Пример: Использование в Jupyter Notebook (Colab)
+Многие исследователи предпочитают работать в Jupyter-средах. Вы можете легко импортировать модель и использовать ее для экспериментов с латентным пространством.
+
+```python
+# 1. Сначала клонируем репозиторий в Colab и переходим в папку
+!git clone https://github.com/zzzigrok/repin-2.0.git
+%cd repin-2.0
+
+# 2. Обучаем модель прямо из терминала Colab (или загружаем свои веса)
+!python cli.py # (потребуется модифицировать скрипт для неинтерактивного режима)
+# ИЛИ загрузите 'repin_weights.pth' в корень папки руками.
+
+# 3. В следующей ячейке:
+import torch
+import matplotlib.pyplot as plt
+from cli import Generator, latent_size
+
+# Инициализируем генератор
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+G = Generator(latent_size=latent_size, hidden_size=256, image_size=784).to(device)
+G.load_state_dict(torch.load('repin_weights.pth', map_location=device))
+G.eval()
+
+# Генерируем 10 картинок
+z = torch.randn(10, latent_size).to(device)
+with torch.no_grad():
+    images = G(z).view(-1, 28, 28).cpu().numpy()
+
+# Визуализация
+fig, axes = plt.subplots(1, 10, figsize=(15, 3))
+for i, ax in enumerate(axes):
+    ax.imshow(images[i], cmap='gray')
+    ax.axis('off')
+plt.show()
+```
+
+<p align="center">
+  <a href="INDEX.md">← Назад: Главная</a><br/>
+  <sub>Repin 2.0 • Integration Guide • 2026</sub>
+</p>
