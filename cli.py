@@ -1,8 +1,8 @@
 """
-Repin 2.0: Generative Digital Art Studio
-----------------------------------------
-A professional GAN-based MNIST generation tool with a high-fidelity CLI interface.
-Optimized for PyTorch 2.0+ and Intel XPU.
+Repin 2.0: Студия генеративного цифрового искусства
+---------------------------------------------------
+Профессиональный инструмент генерации MNIST на базе GAN с высококачественным CLI-интерфейсом.
+Оптимизировано для PyTorch 2.0+ и Intel XPU.
 
 (c) 2026 Repin Project
 """
