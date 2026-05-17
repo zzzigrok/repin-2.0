@@ -118,16 +118,16 @@
         }
 
         .layer-stage {
-            background: radial-gradient(circle at 20% 20%, rgba(168, 85, 247, 0.18), transparent 28%),
-                        radial-gradient(circle at 80% 60%, rgba(59, 130, 246, 0.16), transparent 30%),
-                        rgba(255, 255, 255, 0.04);
+            background: radial-gradient(circle at 18% 18%, rgba(168, 85, 247, 0.2), transparent 30%),
+                        radial-gradient(circle at 76% 62%, rgba(59, 130, 246, 0.18), transparent 32%),
+                        linear-gradient(145deg, rgba(15, 23, 42, 0.62), rgba(2, 6, 23, 0.74));
             border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: inset 0 0 45px rgba(15, 23, 42, 0.55);
+            box-shadow: inset 0 0 55px rgba(15, 23, 42, 0.62), 0 20px 70px rgba(15, 23, 42, 0.35);
         }
 
         .signal-line {
-            stroke-dasharray: 10 14;
-            animation: signal-flow 2.8s linear infinite;
+            stroke-dasharray: 12 18;
+            animation: signal-flow 3s linear infinite;
         }
 
         .signal-line.delay-1 { animation-delay: 0.45s; }
@@ -138,9 +138,25 @@
             to { stroke-dashoffset: -96; }
         }
 
+        .signal-ribbon {
+            animation: ribbon-breathe 4s ease-in-out infinite;
+        }
+
+        @keyframes ribbon-breathe {
+            0%, 100% { opacity: 0.22; }
+            50% { opacity: 0.46; }
+        }
+
+        .weight-thread {
+            stroke-dasharray: 4 10;
+            animation: signal-flow 4.5s linear infinite reverse;
+        }
+
         .neuron-dot {
             animation: neuron-pulse 2.6s ease-in-out infinite;
             filter: drop-shadow(0 0 8px currentColor);
+            transform-box: fill-box;
+            transform-origin: center;
         }
 
         .neuron-dot.delay-1 { animation-delay: 0.35s; }
@@ -150,6 +166,21 @@
         @keyframes neuron-pulse {
             0%, 100% { opacity: 0.45; transform: scale(0.9); }
             50% { opacity: 1; transform: scale(1.15); }
+        }
+
+        .matrix-pixel {
+            animation: pixel-spark 3.4s ease-in-out infinite;
+            transform-box: fill-box;
+            transform-origin: center;
+        }
+
+        .matrix-pixel.delay-1 { animation-delay: 0.35s; }
+        .matrix-pixel.delay-2 { animation-delay: 0.7s; }
+        .matrix-pixel.delay-3 { animation-delay: 1.05s; }
+
+        @keyframes pixel-spark {
+            0%, 100% { opacity: 0.5; transform: scale(0.96); }
+            45%, 60% { opacity: 1; transform: scale(1.08); }
         }
 
         .activation-bar {
@@ -173,7 +204,10 @@
 
         @media (prefers-reduced-motion: reduce) {
             .signal-line,
+            .signal-ribbon,
+            .weight-thread,
             .neuron-dot,
+            .matrix-pixel,
             .activation-bar::after {
                 animation: none;
             }
@@ -423,19 +457,36 @@
 
                 <div class="grid grid-cols-1 xl:grid-cols-[1.6fr_1fr] gap-8 items-stretch">
                     <div class="layer-stage rounded-3xl p-4 sm:p-6 overflow-hidden">
-                        <svg class="w-full h-auto min-h-[280px]" viewBox="0 0 980 420" role="img" aria-labelledby="inner-layers-title inner-layers-desc" xmlns="http://www.w3.org/2000/svg">
+                        <svg class="w-full h-auto min-h-[300px]" viewBox="0 0 1000 460" role="img" aria-labelledby="inner-layers-title inner-layers-desc" xmlns="http://www.w3.org/2000/svg">
                             <title id="inner-layers-title">Внутренние слои генератора Repin 2.0</title>
                             <desc id="inner-layers-desc">Поток данных проходит от латентного вектора 64D через слои 256 и 512 к выходному вектору 784.</desc>
                             <defs>
+                                <pattern id="stage-grid" width="32" height="32" patternUnits="userSpaceOnUse">
+                                    <path d="M32 0H0V32" fill="none" stroke="rgba(148, 163, 184, 0.08)" stroke-width="1" />
+                                </pattern>
                                 <linearGradient id="signal-grad" x1="0%" y1="0%" x2="100%" y2="0%">
                                     <stop offset="0%" stop-color="#a855f7" />
                                     <stop offset="50%" stop-color="#3b82f6" />
                                     <stop offset="100%" stop-color="#ec4899" />
                                 </linearGradient>
+                                <linearGradient id="signal-hot" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#c4b5fd" stop-opacity="0.1" />
+                                    <stop offset="45%" stop-color="#60a5fa" stop-opacity="0.55" />
+                                    <stop offset="100%" stop-color="#f472b6" stop-opacity="0.14" />
+                                </linearGradient>
+                                <linearGradient id="layer-panel" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="rgba(255,255,255,0.09)" />
+                                    <stop offset="100%" stop-color="rgba(255,255,255,0.025)" />
+                                </linearGradient>
                                 <linearGradient id="pixel-grad" x1="0%" y1="0%" x2="100%" y2="100%">
                                     <stop offset="0%" stop-color="#1d4ed8" />
                                     <stop offset="55%" stop-color="#a855f7" />
                                     <stop offset="100%" stop-color="#f472b6" />
+                                </linearGradient>
+                                <linearGradient id="readout-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#a78bfa" />
+                                    <stop offset="50%" stop-color="#22c55e" />
+                                    <stop offset="100%" stop-color="#60a5fa" />
                                 </linearGradient>
                                 <filter id="layer-glow" x="-40%" y="-40%" width="180%" height="180%">
                                     <feGaussianBlur stdDeviation="5" result="blur" />
@@ -444,68 +495,127 @@
                                         <feMergeNode in="SourceGraphic" />
                                     </feMerge>
                                 </filter>
+                                <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="160%">
+                                    <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#020617" flood-opacity="0.55" />
+                                </filter>
                             </defs>
 
-                            <rect x="20" y="24" width="940" height="338" rx="28" fill="rgba(2, 6, 23, 0.52)" stroke="rgba(255,255,255,0.08)" />
-                            <g stroke="url(#signal-grad)" stroke-width="2.4" stroke-linecap="round" fill="none" opacity="0.72">
-                                <path class="signal-line" d="M138 92 C235 58 292 78 372 128 S555 194 642 150 S793 110 872 188" />
-                                <path class="signal-line delay-1" d="M138 148 C226 142 283 184 372 168 S545 112 642 176 S787 248 872 212" />
-                                <path class="signal-line delay-2" d="M138 216 C238 250 292 218 372 224 S548 286 642 224 S786 158 872 236" />
-                                <path class="signal-line delay-3" d="M138 284 C230 310 304 278 372 258 S548 214 642 282 S790 302 872 260" />
+                            <rect x="18" y="20" width="964" height="374" rx="34" fill="rgba(2, 6, 23, 0.58)" stroke="rgba(255,255,255,0.08)" />
+                            <rect x="18" y="20" width="964" height="374" rx="34" fill="url(#stage-grid)" opacity="0.55" />
+                            <path d="M86 326 C235 252 315 354 462 264 S705 270 900 118" fill="none" stroke="rgba(168,85,247,0.16)" stroke-width="82" stroke-linecap="round" class="signal-ribbon" />
+                            <path d="M106 96 C245 76 318 118 430 152 S626 218 742 172 S835 108 914 158" fill="none" stroke="url(#signal-hot)" stroke-width="58" stroke-linecap="round" class="signal-ribbon" />
+
+                            <g stroke="rgba(148, 163, 184, 0.18)" stroke-width="1.2" fill="none">
+                                <path class="weight-thread" d="M166 118 C210 98 242 96 288 118" />
+                                <path class="weight-thread" d="M166 164 C218 170 242 154 288 145" />
+                                <path class="weight-thread" d="M166 218 C214 230 244 204 288 178" />
+                                <path class="weight-thread" d="M166 272 C220 256 244 244 288 210" />
+                                <path class="weight-thread" d="M414 108 C456 92 492 96 534 124" />
+                                <path class="weight-thread" d="M414 155 C464 180 492 184 534 158" />
+                                <path class="weight-thread" d="M414 212 C462 226 494 244 534 214" />
+                                <path class="weight-thread" d="M414 274 C462 286 492 274 534 254" />
+                                <path class="weight-thread" d="M662 112 C706 104 736 112 778 132" />
+                                <path class="weight-thread" d="M662 164 C708 154 738 164 778 170" />
+                                <path class="weight-thread" d="M662 220 C710 232 736 230 778 212" />
+                                <path class="weight-thread" d="M662 282 C708 274 738 252 778 236" />
+                            </g>
+
+                            <g stroke="url(#signal-grad)" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.86">
+                                <path class="signal-line" d="M158 112 C245 78 304 92 382 132 S552 198 634 154 S784 112 878 170" />
+                                <path class="signal-line delay-1" d="M158 162 C242 158 308 182 382 166 S550 118 634 184 S786 248 878 212" />
+                                <path class="signal-line delay-2" d="M158 220 C244 254 310 218 382 226 S548 286 634 228 S786 158 878 246" />
+                                <path class="signal-line delay-3" d="M158 278 C240 318 314 278 382 258 S548 214 634 288 S790 306 878 272" />
                             </g>
 
                             <g font-family="Inter, sans-serif" text-anchor="middle">
-                                <g transform="translate(118 0)">
-                                    <text x="0" y="392" fill="#c4b5fd" font-size="14" font-weight="700">z · 64</text>
-                                    <text x="0" y="410" fill="#94a3b8" font-size="11">шум</text>
-                                    <circle class="neuron-dot" cx="0" cy="92" r="8" fill="#a855f7" />
-                                    <circle class="neuron-dot delay-1" cx="0" cy="148" r="7" fill="#a855f7" />
-                                    <circle class="neuron-dot delay-2" cx="0" cy="216" r="9" fill="#a855f7" />
-                                    <circle class="neuron-dot delay-3" cx="0" cy="284" r="7" fill="#a855f7" />
+                                <g transform="translate(70 56)" filter="url(#soft-shadow)">
+                                    <rect width="116" height="268" rx="24" fill="url(#layer-panel)" stroke="rgba(196,181,253,0.2)" />
+                                    <text x="58" y="32" fill="#c4b5fd" font-size="13" font-weight="800">LATENT</text>
+                                    <text x="58" y="52" fill="#94a3b8" font-size="11">64D seed</text>
+                                    <line x1="58" y1="74" x2="58" y2="222" stroke="rgba(196,181,253,0.16)" stroke-width="1" />
+                                    <circle class="neuron-dot" cx="58" cy="91" r="8" fill="#c084fc" />
+                                    <circle class="neuron-dot delay-1" cx="58" cy="126" r="6" fill="#a78bfa" />
+                                    <circle class="neuron-dot delay-2" cx="58" cy="164" r="9" fill="#c084fc" />
+                                    <circle class="neuron-dot delay-3" cx="58" cy="204" r="7" fill="#a78bfa" />
+                                    <text x="58" y="246" fill="#e9d5ff" font-size="18" font-weight="800">z</text>
                                 </g>
-                                <g transform="translate(372 0)">
-                                    <text x="0" y="392" fill="#86efac" font-size="14" font-weight="700">Linear 64→256</text>
-                                    <text x="0" y="410" fill="#94a3b8" font-size="11">ReLU · первые штрихи</text>
-                                    <circle class="neuron-dot delay-1" cx="-34" cy="86" r="7" fill="#22c55e" />
-                                    <circle class="neuron-dot" cx="28" cy="110" r="9" fill="#22c55e" />
-                                    <circle class="neuron-dot delay-2" cx="-18" cy="164" r="7" fill="#22c55e" />
-                                    <circle class="neuron-dot delay-3" cx="38" cy="204" r="8" fill="#22c55e" />
-                                    <circle class="neuron-dot delay-1" cx="-42" cy="256" r="9" fill="#22c55e" />
-                                    <circle class="neuron-dot delay-2" cx="18" cy="294" r="7" fill="#22c55e" />
-                                </g>
-                                <g transform="translate(642 0)">
-                                    <text x="0" y="392" fill="#93c5fd" font-size="14" font-weight="700">Linear 256→512</text>
-                                    <text x="0" y="410" fill="#94a3b8" font-size="11">ReLU · композиция</text>
-                                    <circle class="neuron-dot delay-2" cx="-48" cy="76" r="7" fill="#3b82f6" />
-                                    <circle class="neuron-dot" cx="16" cy="98" r="8" fill="#3b82f6" />
-                                    <circle class="neuron-dot delay-1" cx="52" cy="144" r="7" fill="#3b82f6" />
-                                    <circle class="neuron-dot delay-3" cx="-28" cy="182" r="10" fill="#3b82f6" />
-                                    <circle class="neuron-dot delay-2" cx="44" cy="232" r="8" fill="#3b82f6" />
-                                    <circle class="neuron-dot delay-1" cx="-54" cy="284" r="7" fill="#3b82f6" />
-                                    <circle class="neuron-dot" cx="14" cy="306" r="8" fill="#3b82f6" />
-                                </g>
-                                <g transform="translate(872 0)">
-                                    <text x="0" y="392" fill="#f9a8d4" font-size="14" font-weight="700">Linear 512→784</text>
-                                    <text x="0" y="410" fill="#94a3b8" font-size="11">Tanh · пиксели</text>
-                                    <rect x="-54" y="104" width="108" height="108" rx="14" fill="rgba(236, 72, 153, 0.1)" stroke="rgba(244, 114, 182, 0.45)" />
-                                    <g filter="url(#layer-glow)">
-                                        <rect x="-36" y="122" width="16" height="16" rx="3" fill="#172554" />
-                                        <rect x="-16" y="122" width="16" height="16" rx="3" fill="#7c3aed" />
-                                        <rect x="4" y="122" width="16" height="16" rx="3" fill="#db2777" />
-                                        <rect x="24" y="122" width="16" height="16" rx="3" fill="#1d4ed8" />
-                                        <rect x="-36" y="142" width="16" height="16" rx="3" fill="#3b82f6" />
-                                        <rect x="-16" y="142" width="16" height="16" rx="3" fill="#c084fc" />
-                                        <rect x="4" y="142" width="16" height="16" rx="3" fill="#f472b6" />
-                                        <rect x="24" y="142" width="16" height="16" rx="3" fill="#581c87" />
-                                        <rect x="-36" y="162" width="16" height="16" rx="3" fill="#0f172a" />
-                                        <rect x="-16" y="162" width="16" height="16" rx="3" fill="url(#pixel-grad)" />
-                                        <rect x="4" y="162" width="16" height="16" rx="3" fill="#a855f7" />
-                                        <rect x="24" y="162" width="16" height="16" rx="3" fill="#2563eb" />
-                                        <rect x="-36" y="182" width="16" height="16" rx="3" fill="#e879f9" />
-                                        <rect x="-16" y="182" width="16" height="16" rx="3" fill="#4f46e5" />
-                                        <rect x="4" y="182" width="16" height="16" rx="3" fill="#0f172a" />
-                                        <rect x="24" y="182" width="16" height="16" rx="3" fill="#f0abfc" />
+
+                                <g transform="translate(286 44)" filter="url(#soft-shadow)">
+                                    <rect width="132" height="292" rx="26" fill="url(#layer-panel)" stroke="rgba(134,239,172,0.2)" />
+                                    <text x="66" y="31" fill="#86efac" font-size="13" font-weight="800">LINEAR</text>
+                                    <text x="66" y="51" fill="#94a3b8" font-size="11">64→256 · ReLU</text>
+                                    <g opacity="0.55" stroke="rgba(134,239,172,0.2)">
+                                        <line x1="42" y1="76" x2="42" y2="224" />
+                                        <line x1="88" y1="76" x2="88" y2="224" />
                                     </g>
+                                    <circle class="neuron-dot delay-1" cx="42" cy="82" r="6" fill="#22c55e" />
+                                    <circle class="neuron-dot" cx="88" cy="104" r="8" fill="#4ade80" />
+                                    <circle class="neuron-dot delay-2" cx="42" cy="133" r="7" fill="#22c55e" />
+                                    <circle class="neuron-dot delay-3" cx="88" cy="162" r="6" fill="#86efac" />
+                                    <circle class="neuron-dot delay-1" cx="42" cy="199" r="8" fill="#22c55e" />
+                                    <circle class="neuron-dot delay-2" cx="88" cy="230" r="6" fill="#4ade80" />
+                                    <rect x="28" y="254" width="76" height="8" rx="4" fill="rgba(15,23,42,0.7)" />
+                                    <rect class="matrix-pixel" x="28" y="254" width="48" height="8" rx="4" fill="#22c55e" />
+                                </g>
+
+                                <g transform="translate(530 44)" filter="url(#soft-shadow)">
+                                    <rect width="140" height="292" rx="26" fill="url(#layer-panel)" stroke="rgba(147,197,253,0.22)" />
+                                    <text x="70" y="31" fill="#93c5fd" font-size="13" font-weight="800">FEATURES</text>
+                                    <text x="70" y="51" fill="#94a3b8" font-size="11">256→512 · ReLU</text>
+                                    <g opacity="0.45" stroke="rgba(147,197,253,0.2)">
+                                        <line x1="36" y1="72" x2="36" y2="232" />
+                                        <line x1="70" y1="72" x2="70" y2="232" />
+                                        <line x1="104" y1="72" x2="104" y2="232" />
+                                    </g>
+                                    <circle class="neuron-dot delay-2" cx="36" cy="78" r="6" fill="#60a5fa" />
+                                    <circle class="neuron-dot" cx="70" cy="98" r="8" fill="#3b82f6" />
+                                    <circle class="neuron-dot delay-1" cx="104" cy="130" r="6" fill="#93c5fd" />
+                                    <circle class="neuron-dot delay-3" cx="36" cy="164" r="9" fill="#60a5fa" />
+                                    <circle class="neuron-dot delay-2" cx="104" cy="202" r="7" fill="#3b82f6" />
+                                    <circle class="neuron-dot delay-1" cx="36" cy="238" r="6" fill="#93c5fd" />
+                                    <circle class="neuron-dot" cx="70" cy="254" r="7" fill="#60a5fa" />
+                                    <rect x="30" y="272" width="80" height="6" rx="3" fill="url(#readout-grad)" opacity="0.75" />
+                                </g>
+
+                                <g transform="translate(778 44)" filter="url(#soft-shadow)">
+                                    <rect width="150" height="292" rx="26" fill="url(#layer-panel)" stroke="rgba(244,114,182,0.24)" />
+                                    <text x="75" y="31" fill="#f9a8d4" font-size="13" font-weight="800">RASTERIZE</text>
+                                    <text x="75" y="51" fill="#94a3b8" font-size="11">512→784 · Tanh</text>
+                                    <rect x="25" y="82" width="100" height="100" rx="18" fill="rgba(236, 72, 153, 0.1)" stroke="rgba(244, 114, 182, 0.45)" />
+                                    <g filter="url(#layer-glow)">
+                                        <rect class="matrix-pixel" x="43" y="101" width="12" height="12" rx="3" fill="#172554" />
+                                        <rect class="matrix-pixel delay-1" x="59" y="101" width="12" height="12" rx="3" fill="#7c3aed" />
+                                        <rect class="matrix-pixel delay-2" x="75" y="101" width="12" height="12" rx="3" fill="#db2777" />
+                                        <rect class="matrix-pixel delay-3" x="91" y="101" width="12" height="12" rx="3" fill="#1d4ed8" />
+                                        <rect class="matrix-pixel delay-1" x="43" y="117" width="12" height="12" rx="3" fill="#3b82f6" />
+                                        <rect class="matrix-pixel delay-2" x="59" y="117" width="12" height="12" rx="3" fill="#c084fc" />
+                                        <rect class="matrix-pixel delay-3" x="75" y="117" width="12" height="12" rx="3" fill="#f472b6" />
+                                        <rect class="matrix-pixel" x="91" y="117" width="12" height="12" rx="3" fill="#581c87" />
+                                        <rect class="matrix-pixel delay-2" x="43" y="133" width="12" height="12" rx="3" fill="#0f172a" />
+                                        <rect class="matrix-pixel delay-3" x="59" y="133" width="12" height="12" rx="3" fill="url(#pixel-grad)" />
+                                        <rect class="matrix-pixel" x="75" y="133" width="12" height="12" rx="3" fill="#a855f7" />
+                                        <rect class="matrix-pixel delay-1" x="91" y="133" width="12" height="12" rx="3" fill="#2563eb" />
+                                        <rect class="matrix-pixel delay-3" x="43" y="149" width="12" height="12" rx="3" fill="#e879f9" />
+                                        <rect class="matrix-pixel" x="59" y="149" width="12" height="12" rx="3" fill="#4f46e5" />
+                                        <rect class="matrix-pixel delay-1" x="75" y="149" width="12" height="12" rx="3" fill="#0f172a" />
+                                        <rect class="matrix-pixel delay-2" x="91" y="149" width="12" height="12" rx="3" fill="#f0abfc" />
+                                    </g>
+                                    <text x="75" y="214" fill="#fbcfe8" font-size="20" font-weight="800">28×28</text>
+                                    <text x="75" y="235" fill="#94a3b8" font-size="11">784 значений</text>
+                                    <rect x="34" y="256" width="82" height="7" rx="3.5" fill="rgba(15,23,42,0.72)" />
+                                    <rect class="matrix-pixel delay-2" x="34" y="256" width="62" height="7" rx="3.5" fill="#f472b6" />
+                                </g>
+
+                                <g transform="translate(62 405)">
+                                    <rect x="0" y="0" width="876" height="34" rx="17" fill="rgba(15,23,42,0.72)" stroke="rgba(255,255,255,0.08)" />
+                                    <rect x="18" y="13" width="196" height="8" rx="4" fill="#a78bfa" opacity="0.78" />
+                                    <rect x="246" y="13" width="196" height="8" rx="4" fill="#22c55e" opacity="0.76" />
+                                    <rect x="474" y="13" width="196" height="8" rx="4" fill="#60a5fa" opacity="0.76" />
+                                    <rect x="702" y="13" width="156" height="8" rx="4" fill="#f472b6" opacity="0.78" />
+                                    <text x="116" y="29" fill="#c4b5fd" font-size="9" font-weight="700">noise manifold</text>
+                                    <text x="344" y="29" fill="#bbf7d0" font-size="9" font-weight="700">stroke primitives</text>
+                                    <text x="572" y="29" fill="#bfdbfe" font-size="9" font-weight="700">composition field</text>
+                                    <text x="780" y="29" fill="#fbcfe8" font-size="9" font-weight="700">pixel logits</text>
                                 </g>
                             </g>
                         </svg>
