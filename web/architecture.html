@@ -112,6 +112,10 @@
         @keyframes text-shine {
             to { background-position: 200% center; }
         }
+
+        .flow-arrow {
+            color: rgba(148, 163, 184, 0.75);
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -195,6 +199,30 @@
                 </p>
             </div>
 
+            <!-- Architecture Summary -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-16 fade-in-section">
+                <div class="glass-card rounded-2xl p-5">
+                    <p class="text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">Тип модели</p>
+                    <p class="text-2xl font-bold text-white">GAN</p>
+                    <p class="text-sm text-gray-400 mt-2">Две сети обучаются в состязательном режиме.</p>
+                </div>
+                <div class="glass-card rounded-2xl p-5">
+                    <p class="text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">Latent space</p>
+                    <p class="text-2xl font-bold text-purple-300">64D</p>
+                    <p class="text-sm text-gray-400 mt-2">Компактный вектор шума задает будущий образ.</p>
+                </div>
+                <div class="glass-card rounded-2xl p-5">
+                    <p class="text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">Базовый кадр</p>
+                    <p class="text-2xl font-bold text-blue-300">28×28</p>
+                    <p class="text-sm text-gray-400 mt-2">784 значения после разворачивания изображения.</p>
+                </div>
+                <div class="glass-card rounded-2xl p-5">
+                    <p class="text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">Финальный PNG</p>
+                    <p class="text-2xl font-bold text-pink-300">224×224</p>
+                    <p class="text-sm text-gray-400 mt-2">Апскейл ×8 сохраняет пиксельную эстетику.</p>
+                </div>
+            </div>
+
             <!-- GAN Concept -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16 fade-in-section">
                 <!-- Generator Card -->
@@ -219,6 +247,20 @@
                         <div class="mt-4 pt-2 border-t border-white/5 flex justify-between">
                             <span>Выход:</span>
                             <span class="text-green-400">28×28 (Pixel Art)</span>
+                        </div>
+                    </div>
+                    <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                        <div class="bg-white/5 rounded-xl p-3 border border-white/10">
+                            <p class="text-gray-500 mb-1">Параметры</p>
+                            <p class="font-semibold text-gray-200">≈ 530K</p>
+                        </div>
+                        <div class="bg-white/5 rounded-xl p-3 border border-white/10">
+                            <p class="text-gray-500 mb-1">Диапазон</p>
+                            <p class="font-semibold text-gray-200">[-1, 1]</p>
+                        </div>
+                        <div class="bg-white/5 rounded-xl p-3 border border-white/10">
+                            <p class="text-gray-500 mb-1">Роль</p>
+                            <p class="font-semibold text-gray-200">Синтез</p>
                         </div>
                     </div>
                 </div>
@@ -246,6 +288,64 @@
                             <span>Выход:</span>
                             <span class="text-red-400">p ∈ [0, 1]</span>
                         </div>
+                    </div>
+                    <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                        <div class="bg-white/5 rounded-xl p-3 border border-white/10">
+                            <p class="text-gray-500 mb-1">Параметры</p>
+                            <p class="font-semibold text-gray-200">≈ 530K</p>
+                        </div>
+                        <div class="bg-white/5 rounded-xl p-3 border border-white/10">
+                            <p class="text-gray-500 mb-1">Leaky slope</p>
+                            <p class="font-semibold text-gray-200">0.2</p>
+                        </div>
+                        <div class="bg-white/5 rounded-xl p-3 border border-white/10">
+                            <p class="text-gray-500 mb-1">Роль</p>
+                            <p class="font-semibold text-gray-200">Критик</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Flow -->
+            <div class="glass-card rounded-3xl p-8 sm:p-12 mb-16 fade-in-section">
+                <h2 class="text-3xl font-bold text-white mb-4 text-center">Поток данных</h2>
+                <p class="max-w-3xl mx-auto text-center text-gray-400 mb-10">
+                    Repin 2.0 намеренно оставляет архитектуру компактной: модель легко обучать, проверять и переносить между CPU и Intel XPU, а каждый этап преобразования прозрачен.
+                </p>
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-4 items-stretch text-center">
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <p class="text-sm text-purple-300 font-semibold mb-2">1. Шум</p>
+                        <p class="font-mono text-gray-200">z ~ N(0, 1)</p>
+                        <p class="text-xs text-gray-500 mt-2">[B, 64]</p>
+                    </div>
+                    <div class="hidden lg:flex items-center justify-center text-3xl flow-arrow">→</div>
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <p class="text-sm text-green-300 font-semibold mb-2">2. Генератор</p>
+                        <p class="font-mono text-gray-200">G(z)</p>
+                        <p class="text-xs text-gray-500 mt-2">[B, 784]</p>
+                    </div>
+                    <div class="hidden lg:flex items-center justify-center text-3xl flow-arrow">→</div>
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <p class="text-sm text-blue-300 font-semibold mb-2">3. Изображение</p>
+                        <p class="font-mono text-gray-200">reshape</p>
+                        <p class="text-xs text-gray-500 mt-2">[B, 1, 28, 28]</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 text-center">
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <p class="text-sm text-pink-300 font-semibold mb-2">4. Денормализация</p>
+                        <p class="font-mono text-gray-200">(x + 1) / 2</p>
+                        <p class="text-xs text-gray-500 mt-2">[-1, 1] → [0, 1]</p>
+                    </div>
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <p class="text-sm text-cyan-300 font-semibold mb-2">5. Апскейл</p>
+                        <p class="font-mono text-gray-200">nearest ×8</p>
+                        <p class="text-xs text-gray-500 mt-2">без размытия краев</p>
+                    </div>
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <p class="text-sm text-white font-semibold mb-2">6. Экспорт</p>
+                        <p class="font-mono text-gray-200">PNG grid</p>
+                        <p class="text-xs text-gray-500 mt-2">224×224 на изображение</p>
                     </div>
                 </div>
             </div>
@@ -282,6 +382,96 @@
                         </div>
                     </div>
                 </div>
+                <div class="mt-10 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <h4 class="font-bold text-white mb-2">D на реальном батче</h4>
+                        <p class="text-sm text-gray-400">Реальные изображения MNIST нормализуются в диапазон [-1, 1], разворачиваются в 784 признака и получают целевую метку 1.</p>
+                    </div>
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <h4 class="font-bold text-white mb-2">D на фейках</h4>
+                        <p class="text-sm text-gray-400">Сгенерированные изображения передаются в дискриминатор через <span class="font-mono text-gray-300">detach()</span>, чтобы не обновлять генератор в фазе критика.</p>
+                    </div>
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <h4 class="font-bold text-white mb-2">G через D</h4>
+                        <p class="text-sm text-gray-400">Генератор получает целевую метку 1: он учится делать такие изображения, которые дискриминатор принимает за реальные.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Training Loop -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16 fade-in-section">
+                <div class="glass-card rounded-3xl p-8">
+                    <h2 class="text-3xl font-bold text-white mb-6">Цикл обучения</h2>
+                    <div class="space-y-5">
+                        <div class="flex gap-4">
+                            <span class="w-8 h-8 rounded-lg bg-red-500/20 text-red-300 flex items-center justify-center font-bold shrink-0">1</span>
+                            <div>
+                                <h3 class="font-bold text-white">Обновление дискриминатора</h3>
+                                <p class="text-gray-400 text-sm mt-1">Считаются две ошибки: на настоящих изображениях и на фейках. Их сумма обновляет только D.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <span class="w-8 h-8 rounded-lg bg-green-500/20 text-green-300 flex items-center justify-center font-bold shrink-0">2</span>
+                            <div>
+                                <h3 class="font-bold text-white">Обновление генератора</h3>
+                                <p class="text-gray-400 text-sm mt-1">Новый шум проходит через G, затем через D. Ошибка считается так, будто фейки должны быть реальными.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <span class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-300 flex items-center justify-center font-bold shrink-0">3</span>
+                            <div>
+                                <h3 class="font-bold text-white">Баланс игры</h3>
+                                <p class="text-gray-400 text-sm mt-1">Если D слишком силен, градиент G ослабевает. Если G слишком силен, D перестает быть полезным критиком.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-3xl p-8">
+                    <h2 class="text-3xl font-bold text-white mb-6">Гиперпараметры</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="text-left text-gray-500 border-b border-white/10">
+                                    <th class="pb-3 font-semibold">Параметр</th>
+                                    <th class="pb-3 font-semibold">Значение</th>
+                                    <th class="pb-3 font-semibold">Зачем</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/5 text-gray-300">
+                                <tr><td class="py-3 font-mono">lr</td><td>0.0002</td><td class="text-gray-400">спокойный шаг AdamW</td></tr>
+                                <tr><td class="py-3 font-mono">betas</td><td>(0.5, 0.999)</td><td class="text-gray-400">меньше инерции в GAN</td></tr>
+                                <tr><td class="py-3 font-mono">weight_decay</td><td>1e-4</td><td class="text-gray-400">мягкая регуляризация</td></tr>
+                                <tr><td class="py-3 font-mono">loss</td><td>BCELoss</td><td class="text-gray-400">бинарная классификация real/fake</td></tr>
+                                <tr><td class="py-3 font-mono">dtype</td><td>bfloat16</td><td class="text-gray-400">экономия памяти при autocast</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tensor Map -->
+            <div class="glass-card rounded-3xl p-8 sm:p-12 mb-16 fade-in-section">
+                <h2 class="text-3xl font-bold text-white mb-8 text-center">Карта размерностей</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="text-left text-gray-500 border-b border-white/10">
+                                <th class="pb-3 font-semibold">Этап</th>
+                                <th class="pb-3 font-semibold">Тензор</th>
+                                <th class="pb-3 font-semibold">Размерность</th>
+                                <th class="pb-3 font-semibold">Комментарий</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5 text-gray-300">
+                            <tr><td class="py-3">Шум</td><td class="font-mono">z</td><td class="font-mono">[B, 64]</td><td class="text-gray-400">случайное зерно образа</td></tr>
+                            <tr><td class="py-3">G hidden 1</td><td class="font-mono">h1</td><td class="font-mono">[B, 256]</td><td class="text-gray-400">первичное расширение признаков</td></tr>
+                            <tr><td class="py-3">G hidden 2</td><td class="font-mono">h2</td><td class="font-mono">[B, 512]</td><td class="text-gray-400">более богатое внутреннее представление</td></tr>
+                            <tr><td class="py-3">G output</td><td class="font-mono">x_fake</td><td class="font-mono">[B, 784]</td><td class="text-gray-400">плоская карта 28×28</td></tr>
+                            <tr><td class="py-3">D input</td><td class="font-mono">x</td><td class="font-mono">[B, 784]</td><td class="text-gray-400">реальное или сгенерированное изображение</td></tr>
+                            <tr><td class="py-3">D output</td><td class="font-mono">p</td><td class="font-mono">[B, 1]</td><td class="text-gray-400">вероятность real-класса</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <!-- Pipeline & Optimizations -->
@@ -309,6 +499,25 @@
                     </div>
                     <h4 class="font-bold text-white mb-2">Nearest Neighbor</h4>
                     <p class="text-gray-400 text-sm">Художественный апскейлинг, превращающий 28x28 в четкий пиксель-арт 224x224.</p>
+                </div>
+            </div>
+
+            <!-- Diagnostics -->
+            <div class="glass-card rounded-3xl p-8 sm:p-12 mb-16 fade-in-section">
+                <h2 class="text-3xl font-bold text-white mb-8 text-center">Как читать поведение модели</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white/5 rounded-2xl p-6 border border-white/10">
+                        <h3 class="font-bold text-green-300 mb-3">Нормальный режим</h3>
+                        <p class="text-gray-400 text-sm">D Loss держится около 0.6–0.9, G Loss меняется волнами. Сети продолжают обмениваться полезным градиентом.</p>
+                    </div>
+                    <div class="bg-white/5 rounded-2xl p-6 border border-white/10">
+                        <h3 class="font-bold text-yellow-300 mb-3">D доминирует</h3>
+                        <p class="text-gray-400 text-sm">D Loss стремится к нулю, а G Loss резко растет. Генератору становится трудно получить обучающий сигнал.</p>
+                    </div>
+                    <div class="bg-white/5 rounded-2xl p-6 border border-white/10">
+                        <h3 class="font-bold text-pink-300 mb-3">Mode collapse</h3>
+                        <p class="text-gray-400 text-sm">Разные z дают похожие изображения. Обычно помогает менять learning rate, latent size или баланс шагов D/G.</p>
+                    </div>
                 </div>
             </div>
 
