@@ -116,6 +116,68 @@
         .flow-arrow {
             color: rgba(148, 163, 184, 0.75);
         }
+
+        .layer-stage {
+            background: radial-gradient(circle at 20% 20%, rgba(168, 85, 247, 0.18), transparent 28%),
+                        radial-gradient(circle at 80% 60%, rgba(59, 130, 246, 0.16), transparent 30%),
+                        rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 0 45px rgba(15, 23, 42, 0.55);
+        }
+
+        .signal-line {
+            stroke-dasharray: 10 14;
+            animation: signal-flow 2.8s linear infinite;
+        }
+
+        .signal-line.delay-1 { animation-delay: 0.45s; }
+        .signal-line.delay-2 { animation-delay: 0.9s; }
+        .signal-line.delay-3 { animation-delay: 1.35s; }
+
+        @keyframes signal-flow {
+            to { stroke-dashoffset: -96; }
+        }
+
+        .neuron-dot {
+            animation: neuron-pulse 2.6s ease-in-out infinite;
+            filter: drop-shadow(0 0 8px currentColor);
+        }
+
+        .neuron-dot.delay-1 { animation-delay: 0.35s; }
+        .neuron-dot.delay-2 { animation-delay: 0.7s; }
+        .neuron-dot.delay-3 { animation-delay: 1.05s; }
+
+        @keyframes neuron-pulse {
+            0%, 100% { opacity: 0.45; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.15); }
+        }
+
+        .activation-bar {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .activation-bar::after {
+            animation: activation-scan 3.2s ease-in-out infinite;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.75), transparent);
+            content: "";
+            inset: 0;
+            position: absolute;
+            transform: translateX(-100%);
+        }
+
+        @keyframes activation-scan {
+            0% { transform: translateX(-100%); }
+            55%, 100% { transform: translateX(100%); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .signal-line,
+            .neuron-dot,
+            .activation-bar::after {
+                animation: none;
+            }
+        }
     </style>
 </head>
 <body class="antialiased">
@@ -346,6 +408,134 @@
                         <p class="text-sm text-white font-semibold mb-2">6. Экспорт</p>
                         <p class="font-mono text-gray-200">PNG grid</p>
                         <p class="text-xs text-gray-500 mt-2">224×224 на изображение</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Internal Layer Visualization -->
+            <div class="glass-card rounded-3xl p-8 sm:p-12 mb-16 fade-in-section">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-white mb-4">Визуализация внутренних слоёв</h2>
+                    <p class="max-w-3xl mx-auto text-gray-400">
+                        Схема показывает, как латентный вектор расширяется в скрытое представление, насыщается признаками и сжимается в 784 пиксельных значения будущего изображения.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 xl:grid-cols-[1.6fr_1fr] gap-8 items-stretch">
+                    <div class="layer-stage rounded-3xl p-4 sm:p-6 overflow-hidden">
+                        <svg class="w-full h-auto min-h-[280px]" viewBox="0 0 980 420" role="img" aria-labelledby="inner-layers-title inner-layers-desc" xmlns="http://www.w3.org/2000/svg">
+                            <title id="inner-layers-title">Внутренние слои генератора Repin 2.0</title>
+                            <desc id="inner-layers-desc">Поток данных проходит от латентного вектора 64D через слои 256 и 512 к выходному вектору 784.</desc>
+                            <defs>
+                                <linearGradient id="signal-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#a855f7" />
+                                    <stop offset="50%" stop-color="#3b82f6" />
+                                    <stop offset="100%" stop-color="#ec4899" />
+                                </linearGradient>
+                                <linearGradient id="pixel-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#1d4ed8" />
+                                    <stop offset="55%" stop-color="#a855f7" />
+                                    <stop offset="100%" stop-color="#f472b6" />
+                                </linearGradient>
+                                <filter id="layer-glow" x="-40%" y="-40%" width="180%" height="180%">
+                                    <feGaussianBlur stdDeviation="5" result="blur" />
+                                    <feMerge>
+                                        <feMergeNode in="blur" />
+                                        <feMergeNode in="SourceGraphic" />
+                                    </feMerge>
+                                </filter>
+                            </defs>
+
+                            <rect x="20" y="24" width="940" height="338" rx="28" fill="rgba(2, 6, 23, 0.52)" stroke="rgba(255,255,255,0.08)" />
+                            <g stroke="url(#signal-grad)" stroke-width="2.4" stroke-linecap="round" fill="none" opacity="0.72">
+                                <path class="signal-line" d="M138 92 C235 58 292 78 372 128 S555 194 642 150 S793 110 872 188" />
+                                <path class="signal-line delay-1" d="M138 148 C226 142 283 184 372 168 S545 112 642 176 S787 248 872 212" />
+                                <path class="signal-line delay-2" d="M138 216 C238 250 292 218 372 224 S548 286 642 224 S786 158 872 236" />
+                                <path class="signal-line delay-3" d="M138 284 C230 310 304 278 372 258 S548 214 642 282 S790 302 872 260" />
+                            </g>
+
+                            <g font-family="Inter, sans-serif" text-anchor="middle">
+                                <g transform="translate(118 0)">
+                                    <text x="0" y="392" fill="#c4b5fd" font-size="14" font-weight="700">z · 64</text>
+                                    <text x="0" y="410" fill="#94a3b8" font-size="11">шум</text>
+                                    <circle class="neuron-dot" cx="0" cy="92" r="8" fill="#a855f7" />
+                                    <circle class="neuron-dot delay-1" cx="0" cy="148" r="7" fill="#a855f7" />
+                                    <circle class="neuron-dot delay-2" cx="0" cy="216" r="9" fill="#a855f7" />
+                                    <circle class="neuron-dot delay-3" cx="0" cy="284" r="7" fill="#a855f7" />
+                                </g>
+                                <g transform="translate(372 0)">
+                                    <text x="0" y="392" fill="#86efac" font-size="14" font-weight="700">Linear 64→256</text>
+                                    <text x="0" y="410" fill="#94a3b8" font-size="11">ReLU · первые штрихи</text>
+                                    <circle class="neuron-dot delay-1" cx="-34" cy="86" r="7" fill="#22c55e" />
+                                    <circle class="neuron-dot" cx="28" cy="110" r="9" fill="#22c55e" />
+                                    <circle class="neuron-dot delay-2" cx="-18" cy="164" r="7" fill="#22c55e" />
+                                    <circle class="neuron-dot delay-3" cx="38" cy="204" r="8" fill="#22c55e" />
+                                    <circle class="neuron-dot delay-1" cx="-42" cy="256" r="9" fill="#22c55e" />
+                                    <circle class="neuron-dot delay-2" cx="18" cy="294" r="7" fill="#22c55e" />
+                                </g>
+                                <g transform="translate(642 0)">
+                                    <text x="0" y="392" fill="#93c5fd" font-size="14" font-weight="700">Linear 256→512</text>
+                                    <text x="0" y="410" fill="#94a3b8" font-size="11">ReLU · композиция</text>
+                                    <circle class="neuron-dot delay-2" cx="-48" cy="76" r="7" fill="#3b82f6" />
+                                    <circle class="neuron-dot" cx="16" cy="98" r="8" fill="#3b82f6" />
+                                    <circle class="neuron-dot delay-1" cx="52" cy="144" r="7" fill="#3b82f6" />
+                                    <circle class="neuron-dot delay-3" cx="-28" cy="182" r="10" fill="#3b82f6" />
+                                    <circle class="neuron-dot delay-2" cx="44" cy="232" r="8" fill="#3b82f6" />
+                                    <circle class="neuron-dot delay-1" cx="-54" cy="284" r="7" fill="#3b82f6" />
+                                    <circle class="neuron-dot" cx="14" cy="306" r="8" fill="#3b82f6" />
+                                </g>
+                                <g transform="translate(872 0)">
+                                    <text x="0" y="392" fill="#f9a8d4" font-size="14" font-weight="700">Linear 512→784</text>
+                                    <text x="0" y="410" fill="#94a3b8" font-size="11">Tanh · пиксели</text>
+                                    <rect x="-54" y="104" width="108" height="108" rx="14" fill="rgba(236, 72, 153, 0.1)" stroke="rgba(244, 114, 182, 0.45)" />
+                                    <g filter="url(#layer-glow)">
+                                        <rect x="-36" y="122" width="16" height="16" rx="3" fill="#172554" />
+                                        <rect x="-16" y="122" width="16" height="16" rx="3" fill="#7c3aed" />
+                                        <rect x="4" y="122" width="16" height="16" rx="3" fill="#db2777" />
+                                        <rect x="24" y="122" width="16" height="16" rx="3" fill="#1d4ed8" />
+                                        <rect x="-36" y="142" width="16" height="16" rx="3" fill="#3b82f6" />
+                                        <rect x="-16" y="142" width="16" height="16" rx="3" fill="#c084fc" />
+                                        <rect x="4" y="142" width="16" height="16" rx="3" fill="#f472b6" />
+                                        <rect x="24" y="142" width="16" height="16" rx="3" fill="#581c87" />
+                                        <rect x="-36" y="162" width="16" height="16" rx="3" fill="#0f172a" />
+                                        <rect x="-16" y="162" width="16" height="16" rx="3" fill="url(#pixel-grad)" />
+                                        <rect x="4" y="162" width="16" height="16" rx="3" fill="#a855f7" />
+                                        <rect x="24" y="162" width="16" height="16" rx="3" fill="#2563eb" />
+                                        <rect x="-36" y="182" width="16" height="16" rx="3" fill="#e879f9" />
+                                        <rect x="-16" y="182" width="16" height="16" rx="3" fill="#4f46e5" />
+                                        <rect x="4" y="182" width="16" height="16" rx="3" fill="#0f172a" />
+                                        <rect x="24" y="182" width="16" height="16" rx="3" fill="#f0abfc" />
+                                    </g>
+                                </g>
+                            </g>
+                        </svg>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-4">
+                        <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="font-bold text-white">Расширение признаков</h3>
+                                <span class="text-xs font-mono text-green-300">64 → 256</span>
+                            </div>
+                            <p class="text-sm text-gray-400 mb-4">Первый слой превращает случайный seed в набор грубых направлений: расположение пятен, контраст и будущую геометрию штриха.</p>
+                            <div class="activation-bar h-2 rounded-full bg-gradient-to-r from-purple-500/40 via-green-400/70 to-blue-500/40"></div>
+                        </div>
+                        <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="font-bold text-white">Сборка композиции</h3>
+                                <span class="text-xs font-mono text-blue-300">256 → 512</span>
+                            </div>
+                            <p class="text-sm text-gray-400 mb-4">Средний слой несёт самую активную работу: смешивает признаки, удерживает разнообразие и формирует внутреннюю карту образа.</p>
+                            <div class="activation-bar h-2 rounded-full bg-gradient-to-r from-blue-500/40 via-purple-400/80 to-pink-500/40"></div>
+                        </div>
+                        <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="font-bold text-white">Проекция в пиксели</h3>
+                                <span class="text-xs font-mono text-pink-300">512 → 784</span>
+                            </div>
+                            <p class="text-sm text-gray-400 mb-4">Последний слой переводит признаки в плоскую сетку 28×28, а Tanh ограничивает значения диапазоном [-1, 1].</p>
+                            <div class="activation-bar h-2 rounded-full bg-gradient-to-r from-pink-500/40 via-fuchsia-300/80 to-blue-500/40"></div>
+                        </div>
                     </div>
                 </div>
             </div>
