@@ -474,6 +474,99 @@
                 </div>
             </div>
 
+            <!-- TensorZ Diagnostics -->
+            <div class="glass-card rounded-3xl p-8 sm:p-12 mb-16 fade-in-section">
+                <div class="text-center mb-8">
+                    <p class="text-xs uppercase tracking-[0.25em] text-purple-300 mb-3">tensorZ audit</p>
+                    <h2 class="text-3xl font-bold text-white">Реальные веса модели</h2>
+                    <p class="max-w-3xl mx-auto text-gray-400 mt-4">
+                        Данные ниже получены из консольной утилиты <span class="font-mono text-gray-300">tensorz</span> для файла <span class="font-mono text-gray-300">weights/repin_weights.pth</span>. Это снимок фактического состояния сохранённого генератора.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <p class="text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">Тензоров</p>
+                        <p class="text-2xl font-bold text-white">6</p>
+                    </div>
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <p class="text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">Параметров</p>
+                        <p class="text-2xl font-bold text-blue-300">550.4K</p>
+                    </div>
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <p class="text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">Память</p>
+                        <p class="text-2xl font-bold text-green-300">2.1 MB</p>
+                    </div>
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <p class="text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">Sparsity</p>
+                        <p class="text-2xl font-bold text-pink-300">0.00%</p>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto mb-8">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="text-left text-gray-500 border-b border-white/10">
+                                <th class="pb-3 font-semibold">Тензор</th>
+                                <th class="pb-3 font-semibold">Shape</th>
+                                <th class="pb-3 font-semibold">Тип</th>
+                                <th class="pb-3 font-semibold">Параметры</th>
+                                <th class="pb-3 font-semibold">Память</th>
+                                <th class="pb-3 font-semibold">Mean</th>
+                                <th class="pb-3 font-semibold">Min</th>
+                                <th class="pb-3 font-semibold">Max</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5 text-gray-300">
+                            <tr><td class="py-3 font-mono">net.0.weight</td><td>256x64</td><td>float32</td><td>16.4 K</td><td>64.0 KB</td><td>0.0077</td><td>-0.7723</td><td>0.8468</td></tr>
+                            <tr><td class="py-3 font-mono">net.0.bias</td><td>256</td><td>float32</td><td>256</td><td>1.0 KB</td><td>-0.3628</td><td>-2.1270</td><td>2.5104</td></tr>
+                            <tr><td class="py-3 font-mono">net.2.weight</td><td>512x256</td><td>float32</td><td>131.1 K</td><td>512.0 KB</td><td>-0.0667</td><td>-4.0907</td><td>1.1734</td></tr>
+                            <tr><td class="py-3 font-mono">net.2.bias</td><td>512</td><td>float32</td><td>512</td><td>2.0 KB</td><td>0.0891</td><td>-0.4240</td><td>0.6244</td></tr>
+                            <tr><td class="py-3 font-mono">net.4.weight</td><td>784x512</td><td>float32</td><td>401.4 K</td><td>1.53 MB</td><td>-0.0188</td><td>-3.8660</td><td>1.2479</td></tr>
+                            <tr><td class="py-3 font-mono">net.4.bias</td><td>784</td><td>float32</td><td>784</td><td>3.06 KB</td><td>-0.0958</td><td>-0.5487</td><td>0.2581</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-xl font-bold text-white mb-4">Гистограмма распределения</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <div class="flex justify-between text-xs text-gray-400 mb-1"><span>[-0.4601, -0.1300]</span><span>102 059 · 18.54%</span></div>
+                                <div class="h-3 rounded-full bg-white/10 overflow-hidden"><div class="h-full bg-blue-400" style="width: 25.41%"></div></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs text-gray-400 mb-1"><span>[-0.1300, 0.2000]</span><span>401 518 · 72.95%</span></div>
+                                <div class="h-3 rounded-full bg-white/10 overflow-hidden"><div class="h-full bg-purple-400" style="width: 100%"></div></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs text-gray-400 mb-1"><span>[0.2000, 0.5301]</span><span>33 566 · 6.10%</span></div>
+                                <div class="h-3 rounded-full bg-white/10 overflow-hidden"><div class="h-full bg-pink-400" style="width: 8.36%"></div></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs text-gray-400 mb-1"><span>Остальные интервалы</span><span>13 273 · 2.41%</span></div>
+                                <div class="h-3 rounded-full bg-white/10 overflow-hidden"><div class="h-full bg-gray-400" style="width: 3.31%"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white mb-4">Интерпретация</h3>
+                        <div class="space-y-4 text-sm text-gray-400">
+                            <p>
+                                Основная масса весов сконцентрирована около нуля: диапазон от -0.1300 до 0.2000 содержит почти три четверти всех значений. Это нормальный признак компактной MLP-модели без разреживания.
+                            </p>
+                            <p>
+                                Самые широкие хвосты находятся в матрицах <span class="font-mono text-gray-300">net.2.weight</span> и <span class="font-mono text-gray-300">net.4.weight</span>: они формируют наиболее ёмкие преобразования признаков перед выходом 28×28.
+                            </p>
+                            <p>
+                                Все тензоры имеют тип <span class="font-mono text-gray-300">float32</span> в сохранённом файле; смешанная точность <span class="font-mono text-gray-300">bfloat16</span> применяется во время вычислений через autocast.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Pipeline & Optimizations -->
             <div class="text-center mb-12 fade-in-section">
                 <h2 class="text-3xl font-bold text-white mb-4">Технологии и Оптимизации</h2>
