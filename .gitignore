@@ -154,4 +154,5 @@ cython_debug/
 # Project specific
 data/
 generated_art/
+reports/
 GEMINI.md
