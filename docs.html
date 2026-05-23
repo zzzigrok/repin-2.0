@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Документация | Repin 2.0</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Highlight.js for Syntax Highlighting -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    
+    <!-- Marked.js for Markdown Parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+    
+    <!-- Mermaid.js for Diagrams -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        glass: {
+                            100: 'rgba(255, 255, 255, 0.05)',
+                            200: 'rgba(255, 255, 255, 0.1)',
+                            300: 'rgba(255, 255, 255, 0.2)',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #0b0f19;
+            color: #f8fafc;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Glassmorphism Panels */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .glass-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            border-left: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            border-top: 1px solid rgba(168, 85, 247, 0.3);
+            border-left: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .glass-sidebar {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .glass-toc {
+            background: rgba(15, 23, 42, 0.25);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-left: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .glass-button {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .glass-button:hover {
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* SVG Animations */
+        @keyframes blob-float {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.05); }
+            66% { transform: translate(-20px, 20px) scale(0.95); }
+            100% { transform: translate(0px, 0px) scale(1); }
+        }
+
+        .animate-blob {
+            animation: blob-float 12s infinite alternate ease-in-out;
+        }
+        
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
+
+        /* Custom Scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.1);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(168, 85, 247, 0.35);
+        }
+
+        /* Styled Markdown Elements */
+        #content-body p {
+            margin-top: 1.125rem;
+            margin-bottom: 1.125rem;
+            line-height: 1.8;
+            color: #cbd5e1;
+        }
+        
+        #content-body a {
+            color: #c084fc;
+            text-decoration: underline;
+            text-decoration-color: rgba(168, 85, 247, 0.25);
+            text-underline-offset: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        #content-body a:hover {
+            color: #d8b4fe;
+            text-decoration-color: #a855f7;
+        }
+        
+        #content-body ul {
+            list-style-type: disc;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+        
+        #content-body ol {
+            list-style-type: decimal;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+        }
+        
+        #content-body li {
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+            color: #cbd5e1;
+            line-height: 1.7;
+        }
+        
+        #content-body code:not(pre code) {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #f472b6;
+            padding: 0.125rem 0.375rem;
+            border-radius: 0.375rem;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+        
+        #content-body img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        #content-body hr {
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+            border: 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        #content-body input[type="checkbox"] {
+            accent-color: #a855f7;
+            margin-right: 0.5rem;
+            transform: scale(1.1);
+        }
+
+        /* SVG Neural Network Animation in Logo (from index.html) */
+        .brush {
+            fill: none;
+            stroke: url(#repin-grad);
+            stroke-width: 4.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        .net-line {
+            fill: none;
+            stroke: url(#repin-grad);
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-dasharray: 30;
+            animation: drawLine 4s infinite cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nl-1 { animation-delay: 0s; }
+        .nl-2 { animation-delay: 0.3s; }
+        .nl-3 { animation-delay: 0.6s; }
+        .nl-4 { animation-delay: 0.9s; }
+        .nl-5 { animation-delay: 1.2s; }
+        .nl-6 { animation-delay: 1.5s; }
+        .nl-7 { animation-delay: 1.8s; }
+        @keyframes drawLine {
+            0% { stroke-dashoffset: 30; opacity: 0; }
+            15%, 85% { opacity: 1; }
+            40%, 60% { stroke-dashoffset: 0; }
+            100% { stroke-dashoffset: -30; opacity: 0; }
+        }
+        .node {
+            fill: url(#repin-grad);
+            animation: pulseNode 1.5s infinite alternate ease-in-out;
+        }
+        .nd-1 { animation-delay: 0s; }
+        .nd-2 { animation-delay: 0.4s; }
+        .nd-3 { animation-delay: 0.8s; }
+        .nd-4 { animation-delay: 1.2s; }
+        .nd-5 { animation-delay: 1.6s; }
+        .nd-6 { animation-delay: 2.0s; }
+        @keyframes pulseNode {
+            0% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
+        .logo-text {
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            font-size: 11px;
+            letter-spacing: 0.15em;
+            fill: url(#text-grad);
+            text-anchor: middle;
+        }
+    </style>
+</head>
+<body class="antialiased font-sans text-slate-200">
+
+    <!-- Ambient background blobs -->
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[40rem] h-[40rem] bg-purple-900 rounded-full mix-blend-screen filter blur-[120px] opacity-25 animate-blob"></div>
+        <div class="absolute top-[20%] right-[-10%] w-[35rem] h-[35rem] bg-blue-900 rounded-full mix-blend-screen filter blur-[140px] opacity-20 animate-blob animation-delay-2000"></div>
+        <div class="absolute bottom-[-20%] left-[20%] w-[45rem] h-[45rem] bg-pink-900 rounded-full mix-blend-screen filter blur-[120px] opacity-20 animate-blob animation-delay-4000"></div>
+    </div>
+
+    <!-- MAIN INTERFACE CONTAINER -->
+    <div class="min-h-screen flex flex-col">
+        
+        <!-- Header -->
+        <header class="fixed top-0 left-0 right-0 h-20 z-40 glass-panel flex items-center px-4 sm:px-6 lg:px-8 justify-between">
+            <div class="flex items-center gap-4">
+                <!-- Hamburger menu button (Mobile only) -->
+                <button id="mobile-sidebar-toggle" class="lg:hidden p-2 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 focus:outline-none transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+                
+                <!-- Logo (SVG from index.html) -->
+                <a href="index.html" class="flex items-center">
+                    <svg class="h-14 w-14 sm:h-16 sm:w-16 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                        <defs>
+                            <linearGradient id="repin-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#00f2ff" />
+                                <stop offset="100%" stop-color="#ff00ff" />
+                            </linearGradient>
+                            <linearGradient id="text-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#00f2ff" />
+                                <stop offset="100%" stop-color="#ff00ff" />
+                            </linearGradient>
+                        </defs>
+                        <path class="net-line nl-1" d="M 39,42 L 56,50" />
+                        <path class="net-line nl-2" d="M 39,42 L 46,62" />
+                        <path class="net-line nl-3" d="M 56,50 L 66,45" />
+                        <path class="net-line nl-4" d="M 56,50 L 62,65" />
+                        <path class="net-line nl-5" d="M 46,62 L 62,65" />
+                        <path class="net-line nl-6" d="M 66,45 L 76,58" />
+                        <path class="net-line nl-7" d="M 62,65 L 76,58" />
+                        <path class="brush" d="M 26,60 C 29,45 26,25 30,15 C 49,12 59,28 44,40 C 39,43 32,40 27,38" />
+                        <circle class="node nd-1" cx="39" cy="42" r="2.5" />
+                        <circle class="node nd-2" cx="56" cy="50" r="2.5" />
+                        <circle class="node nd-3" cx="46" cy="62" r="2.5" />
+                        <circle class="node nd-4" cx="66" cy="45" r="2.5" />
+                        <circle class="node nd-5" cx="62" cy="65" r="2.5" />
+                        <circle class="node nd-6" cx="76" cy="58" r="2.5" />
+                        <text x="51.5" y="88" class="logo-text">REPIN 2.0</text>
+                    </svg>
+                </a>
+                
+                <span class="hidden sm:inline-block h-6 w-[1px] bg-white/10 mx-1"></span>
+                <span class="text-sm font-semibold tracking-wide text-slate-300">Документация</span>
+            </div>
+            
+            <!-- Desktop Search Bar -->
+            <div class="flex-1 max-w-md mx-6 relative hidden md:block">
+                <div class="relative">
+                    <input type="text" id="search-input" placeholder="Поиск по документации..." class="w-full bg-slate-950/60 border border-white/10 rounded-xl pl-10 pr-4 py-2 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all duration-300">
+                    <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+                <!-- Desktop Search Results Dropdown -->
+                <div id="search-results" class="absolute left-0 right-0 mt-2 max-h-96 overflow-y-auto hidden glass-card rounded-xl border border-white/10 shadow-2xl z-50 p-2"></div>
+            </div>
+            
+            <!-- Header Links -->
+            <div class="flex items-center gap-4">
+                <!-- Mobile search button -->
+                <button id="mobile-search-toggle" class="md:hidden p-2 text-slate-400 hover:text-white rounded-lg hover:bg-white/5 focus:outline-none transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </button>
+                
+                <a href="index.html" class="text-slate-300 hover:text-white text-sm font-medium transition-colors duration-150 hidden sm:inline-block">На главную</a>
+                
+                <a href="https://github.com/zzzigrok/repin-2.0" target="_blank" class="glass-button px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clip-rule="evenodd"></path></svg>
+                    GitHub
+                </a>
+            </div>
+        </header>
+        
+        <!-- Mobile Search Dropdown Overlay -->
+        <div id="mobile-search-bar" class="fixed top-20 left-0 right-0 glass-panel p-4 z-40 hidden md:hidden">
+            <div class="relative">
+                <input type="text" id="mobile-search-input" placeholder="Поиск по документации..." class="w-full bg-slate-950/80 border border-white/15 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500">
+                <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </div>
+            <div id="mobile-search-results" class="max-h-72 overflow-y-auto mt-2 hidden glass-card rounded-xl border border-white/10 shadow-2xl p-2"></div>
+        </div>
+
+        <!-- Sidebar Backdrop (Mobile only) -->
+        <div id="sidebar-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-20 hidden lg:hidden"></div>
+
+        <!-- Layout Body -->
+        <div class="flex-grow flex pt-20">
+            
+            <!-- Left Navigation Sidebar -->
+            <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 lg:w-72 pt-20 z-30 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out glass-sidebar flex flex-col">
+                <div class="flex-1 overflow-y-auto px-4 py-6 scrollbar-thin">
+                    <nav id="sidebar-nav" class="space-y-6">
+                        <!-- Dynamic Sidebar Categories injected here -->
+                    </nav>
+                </div>
+            </aside>
+            
+            <!-- Main Content Area -->
+            <main class="flex-grow lg:pl-64 xl:pr-64 min-w-0 flex flex-col">
+                <div class="flex-grow max-w-4xl mx-auto w-full px-4 sm:px-6 lg:px-12 py-10 flex flex-col justify-between">
+                    
+                    <!-- Article Body wrapper -->
+                    <article class="w-full">
+                        <!-- Breadcrumbs -->
+                        <div id="breadcrumbs" class="text-xs text-purple-400 font-semibold uppercase tracking-wider mb-2"></div>
+                        
+                        <!-- Heading title -->
+                        <h1 id="article-title" class="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-8"></h1>
+                        
+                        <!-- Main Content Body (parsed markdown) -->
+                        <div id="content-body" class="prose prose-invert max-w-none">
+                            <!-- Injected Markdown Content -->
+                        </div>
+                    </article>
+                    
+                    <!-- Previous / Next Navigation Buttons -->
+                    <div class="flex justify-between items-center border-t border-white/10 pt-8 mt-16 gap-4">
+                        <a id="prev-btn" href="#" class="glass-card hover:-translate-y-0.5 hover:border-purple-500/30 hover:bg-purple-500/5 p-4 rounded-xl flex flex-col flex-1 text-left group">
+                            <span class="text-xs text-slate-500 mb-1 group-hover:text-purple-400 transition-colors">← Предыдущий раздел</span>
+                            <span id="prev-title" class="text-sm font-semibold text-white"></span>
+                        </a>
+                        <a id="next-btn" href="#" class="glass-card hover:-translate-y-0.5 hover:border-purple-500/30 hover:bg-purple-500/5 p-4 rounded-xl flex flex-col flex-1 text-right group">
+                            <span class="text-xs text-slate-500 mb-1 group-hover:text-purple-400 transition-colors">Следующий раздел →</span>
+                            <span id="next-title" class="text-sm font-semibold text-white"></span>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Footer -->
+                <footer class="border-t border-white/5 py-6 px-6 sm:px-8 text-center text-xs text-slate-500 mt-auto bg-slate-950/20">
+                    © 2026 Repin 2.0 Project. Все права защищены.
+                </footer>
+            </main>
+            
+            <!-- Right-hand Table of Contents Sidebar -->
+            <aside id="toc" class="fixed inset-y-0 right-0 w-64 pt-28 px-6 hidden xl:block z-10 glass-toc overflow-y-auto">
+                <h4 class="text-xs font-bold text-white uppercase tracking-wider mb-4">На этой странице</h4>
+                <ul id="toc-list" class="space-y-1 text-sm border-l border-white/5">
+                    <!-- Dynamic ToC items injected here -->
+                </ul>
+            </aside>
+            
+        </div>
+    </div>
+
+    <!-- Docs data and Application logic -->
+    <script src="docs_data.js"></script>
+    <script>
+        // Define key reading order for document pagination
+        const articleOrder = [
+            'index',
+            'usage',
+            'architecture',
+            'api_reference',
+            'troubleshooting',
+            'tutorials/readme',
+            'tutorials/getting_started',
+            'tutorials/training',
+            'tutorials/hyperparameters',
+            'tutorials/generation_guide',
+            'tutorials/mode_collapse',
+            'faq',
+            'best_practices',
+            'integration',
+            'changelog',
+            'contributing'
+        ];
+
+        let currentRoute = '';
+        let activeSearchQuery = '';
+        let tocObserver = null;
+
+        // Custom slugifier to handle Cyrillic names beautifully in hash links
+        function slugify(text) {
+            return text.toLowerCase()
+                .trim()
+                .replace(/[^\w\s\u0400-\u04FF\-]/g, '') // keeps alphanumeric, spaces, Cyrillic & hyphens
+                .replace(/\s+/g, '-')
+                .replace(/-+/g, '-');
+        }
+
+        // Helper to escape HTML tags inside markdown code snippets
+        function escapeHtml(text) {
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Set up custom Marked.js rules
+        function configureMarked() {
+            const renderer = new marked.Renderer();
+            
+            // Custom heading rendering with anchor links
+            renderer.heading = function(text, level, raw) {
+                const id = slugify(raw);
+                return `
+                    <h${level} id="${id}" class="group relative flex items-center mt-8 mb-4 font-bold text-white tracking-tight heading-${level}">
+                        <span class="heading-text">${text}</span>
+                        <a href="#${currentRoute}#${id}" class="ml-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-purple-400 hover:text-purple-300 anchor-link" title="Скопировать ссылку" onclick="copyHeadingLink(event, '${id}')">
+                            <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 002.502-2.502m0 0l4-4a4 4 0 015.656 5.656l-1.1 1.1"></path>
+                            </svg>
+                        </a>
+                    </h${level}>
+                `;
+            };
+
+            // Custom table rendering for beautiful styling
+            renderer.table = function(header, body) {
+                return `
+                    <div class="overflow-x-auto my-6 rounded-xl border border-white/10 bg-slate-900/10 shadow-lg">
+                        <table class="min-w-full divide-y divide-white/10">
+                            <thead class="bg-slate-900/50">
+                                ${header}
+                            </thead>
+                            <tbody class="divide-y divide-white/5 bg-transparent">
+                                ${body}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            };
+
+            renderer.tablerow = function(content) {
+                return `<tr class="hover:bg-white/5 transition-colors duration-150">${content}</tr>`;
+            };
+
+            renderer.tablecell = function(content, flags) {
+                const type = flags.header ? 'th' : 'td';
+                const alignClass = flags.align ? `text-${flags.align}` : '';
+                const paddingClass = flags.header 
+                    ? 'px-6 py-4 text-left text-xs font-bold text-slate-300 uppercase tracking-wider' 
+                    : 'px-6 py-4 text-sm text-slate-300';
+                return `<${type} class="${paddingClass} ${alignClass}">${content}</${type}>`;
+            };
+
+            // Support GitHub style alerts [!TIP], [!NOTE], [!WARNING], etc.
+            renderer.blockquote = function(quote) {
+                const cleanQuote = quote.trim();
+                const alertRegex = /\[!(NOTE|TIP|WARNING|IMPORTANT|CAUTION)\]/i;
+                const match = cleanQuote.match(alertRegex);
+                
+                if (match) {
+                    const type = match[1].toUpperCase();
+                    const textWithoutTag = quote
+                        .replace(/\[!(NOTE|TIP|WARNING|IMPORTANT|CAUTION)\]/i, '')
+                        .replace(/<p>\s*(?:<br\s*\/?>)?\s*/i, '<p>')
+                        .replace(/<strong>\s*<\/strong>/g, '')
+                        .trim();
+                    
+                    let alertClass = '';
+                    let icon = '';
+                    let title = '';
+                    
+                    switch(type) {
+                        case 'NOTE':
+                            alertClass = 'border-l-4 border-blue-500 bg-blue-500/10 text-blue-200';
+                            title = 'Примечание';
+                            icon = `<svg class="w-5 h-5 text-blue-400 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+                            break;
+                        case 'TIP':
+                            alertClass = 'border-l-4 border-green-500 bg-green-500/10 text-green-200';
+                            title = 'Совет';
+                            icon = `<svg class="w-5 h-5 text-green-400 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>`;
+                            break;
+                        case 'WARNING':
+                            alertClass = 'border-l-4 border-yellow-500 bg-yellow-500/10 text-yellow-200';
+                            title = 'Внимание';
+                            icon = `<svg class="w-5 h-5 text-yellow-400 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
+                            break;
+                        case 'IMPORTANT':
+                            alertClass = 'border-l-4 border-purple-500 bg-purple-500/10 text-purple-200';
+                            title = 'Важно';
+                            icon = `<svg class="w-5 h-5 text-purple-400 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+                            break;
+                        case 'CAUTION':
+                            alertClass = 'border-l-4 border-red-500 bg-red-500/10 text-red-200';
+                            title = 'Опасно';
+                            icon = `<svg class="w-5 h-5 text-red-400 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>`;
+                            break;
+                    }
+                    
+                    return `
+                        <div class="my-6 p-5 rounded-r-xl ${alertClass} shadow-lg relative overflow-hidden backdrop-blur-sm bg-opacity-30">
+                            <div class="flex items-center font-bold text-white mb-2 uppercase tracking-wider text-xs">
+                                ${icon}
+                                <span>${title}</span>
+                            </div>
+                            <div class="text-sm leading-relaxed">${textWithoutTag}</div>
+                        </div>
+                    `;
+                }
+                return `
+                    <blockquote class="my-6 pl-6 border-l-4 border-purple-500/40 italic text-slate-400 bg-white/5 py-4 pr-4 rounded-r-xl">
+                        ${quote}
+                    </blockquote>
+                `;
+            };
+
+            // Custom code block rendering (copy button, mermaid parsing)
+            renderer.code = function(code, infostring, escaped) {
+                if (infostring === 'mermaid') {
+                    return `<div class="mermaid my-8 flex justify-center bg-slate-950/40 p-6 rounded-2xl border border-white/5 shadow-xl overflow-x-auto">${code}</div>`;
+                }
+                
+                const lang = infostring || 'plaintext';
+                return `
+                    <div class="relative my-6 group">
+                        <div class="absolute right-3 top-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
+                            <button class="copy-code-btn glass-button text-xs py-1.5 px-3 rounded-lg text-slate-300 hover:text-white" onclick="copyCode(this)">
+                                Копировать
+                            </button>
+                        </div>
+                        <pre class="rounded-xl overflow-x-auto p-5 border border-white/10 bg-slate-950/75 font-mono text-sm leading-relaxed"><code class="language-${lang}">${escaped ? code : escapeHtml(code)}</code></pre>
+                    </div>
+                `;
+            };
+
+            marked.use({ renderer });
+        }
+
+        // Build dynamic sidebar navigation
+        function buildSidebar() {
+            const nav = document.getElementById('sidebar-nav');
+            const groups = {};
+            const groupOrders = {};
+            
+            // Collate articles in sidebar group definitions
+            for (const key of articleOrder) {
+                const doc = window.docsData[key];
+                if (doc) {
+                    if (!groups[doc.group]) {
+                        groups[doc.group] = [];
+                        groupOrders[doc.group] = doc.groupOrder;
+                    }
+                    groups[doc.group].push(doc);
+                }
+            }
+
+            // Append any docs not present in hardcoded articleOrder list
+            for (const key in window.docsData) {
+                if (!articleOrder.includes(key)) {
+                    const doc = window.docsData[key];
+                    if (!groups[doc.group]) {
+                        groups[doc.group] = [];
+                        groupOrders[doc.group] = doc.groupOrder;
+                    }
+                    groups[doc.group].push(doc);
+                }
+            }
+
+            // Sort groups using groupOrder property
+            const sortedGroups = Object.keys(groups).sort((a, b) => groupOrders[a] - groupOrders[b]);
+
+            nav.innerHTML = sortedGroups.map(groupName => `
+                <div>
+                    <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest px-3 mb-2.5">${groupName}</h3>
+                    <ul class="space-y-1">
+                        ${groups[groupName].map(doc => `
+                            <li>
+                                <a href="#${doc.key}" id="side-link-${doc.key.replace(/\//g, '-')}" class="sidebar-link flex items-center px-3 py-2 text-sm font-medium rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition-all duration-150">
+                                    ${doc.title}
+                                </a>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `).join('');
+        }
+
+        // Update sidebar active highlights
+        function updateSidebarActiveState(activeRoute) {
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                link.classList.remove(
+                    'text-purple-400', 'bg-purple-500/10', 'border-l-2', 'border-purple-500', 'pl-2.5', 'font-semibold'
+                );
+                link.classList.add('text-slate-400', 'hover:bg-white/5');
+            });
+            
+            const activeLink = document.getElementById(`side-link-${activeRoute.replace(/\//g, '-')}`);
+            if (activeLink) {
+                activeLink.classList.add(
+                    'text-purple-400', 'bg-purple-500/10', 'border-l-2', 'border-purple-500', 'pl-2.5', 'font-semibold'
+                );
+                activeLink.classList.remove('text-slate-400', 'hover:bg-white/5');
+            }
+        }
+
+        // Mobile sidebar animation toggling
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const mobileSidebarToggle = document.getElementById('mobile-sidebar-toggle');
+
+        function toggleSidebar(show) {
+            if (show) {
+                sidebar.classList.remove('-translate-x-full');
+                sidebarOverlay.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                sidebarOverlay.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+        }
+
+        mobileSidebarToggle.addEventListener('click', () => toggleSidebar(true));
+        sidebarOverlay.addEventListener('click', () => toggleSidebar(false));
+
+        sidebar.addEventListener('click', (e) => {
+            if (e.target.closest('.sidebar-link')) {
+                if (window.innerWidth < 1024) {
+                    toggleSidebar(false);
+                }
+            }
+        });
+
+        // Mobile search panel toggle
+        const mobileSearchToggle = document.getElementById('mobile-search-toggle');
+        const mobileSearchBar = document.getElementById('mobile-search-bar');
+        
+        mobileSearchToggle.addEventListener('click', () => {
+            mobileSearchBar.classList.toggle('hidden');
+            if (!mobileSearchBar.classList.contains('hidden')) {
+                document.getElementById('mobile-search-input').focus();
+            }
+        });
+
+        // Copy button action for code blocks
+        function copyCode(btn) {
+            const pre = btn.closest('.group').querySelector('pre code');
+            if (!pre) return;
+            navigator.clipboard.writeText(pre.textContent).then(() => {
+                btn.textContent = 'Скопировано!';
+                btn.classList.add('bg-purple-600/20', 'text-purple-300', 'border-purple-500/40');
+                setTimeout(() => {
+                    btn.textContent = 'Копировать';
+                    btn.classList.remove('bg-purple-600/20', 'text-purple-300', 'border-purple-500/40');
+                }, 2000);
+            });
+        }
+
+        // Copy direct section link toast helper
+        function copyHeadingLink(event, id) {
+            event.preventDefault();
+            const link = window.location.origin + window.location.pathname + '#' + currentRoute + '#' + id;
+            navigator.clipboard.writeText(link).then(() => {
+                showToast('Ссылка на раздел скопирована!');
+            });
+        }
+
+        // Toast notifications
+        function showToast(message) {
+            let toast = document.getElementById('toast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'toast';
+                toast.className = 'fixed bottom-5 right-5 z-50 glass-card bg-slate-950/90 text-white text-xs px-4 py-3.5 rounded-xl border border-white/10 shadow-2xl transition-all duration-300 translate-y-10 opacity-0 pointer-events-none flex items-center gap-2';
+                document.body.appendChild(toast);
+            }
+            
+            toast.innerHTML = `
+                <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span class="font-medium">${message}</span>
+            `;
+            
+            toast.classList.remove('translate-y-10', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-10', 'opacity-0');
+            }, 2500);
+        }
+
+        // Search engine logic
+        function setupSearch() {
+            const inputs = ['search-input', 'mobile-search-input'];
+            const resultsDivs = ['search-results', 'mobile-search-results'];
+            
+            inputs.forEach((inputId, index) => {
+                const input = document.getElementById(inputId);
+                const results = document.getElementById(resultsDivs[index]);
+                if (!input || !results) return;
+                
+                input.addEventListener('input', (e) => {
+                    const query = e.target.value.trim().toLowerCase();
+                    
+                    const otherInput = document.getElementById(inputs[1 - index]);
+                    if (otherInput) otherInput.value = e.target.value;
+                    
+                    if (!query) {
+                        results.innerHTML = '';
+                        results.classList.add('hidden');
+                        return;
+                    }
+                    
+                    const matches = [];
+                    for (const key in window.docsData) {
+                        const doc = window.docsData[key];
+                        const titleMatch = doc.title.toLowerCase().includes(query);
+                        const contentMatch = doc.content.toLowerCase().includes(query);
+                        
+                        if (titleMatch || contentMatch) {
+                            let snippet = '';
+                            if (contentMatch) {
+                                const idx = doc.content.toLowerCase().indexOf(query);
+                                const start = Math.max(0, idx - 40);
+                                const end = Math.min(doc.content.length, idx + query.length + 45);
+                                snippet = '...' + doc.content.substring(start, end).replace(/\n/g, ' ') + '...';
+                            } else {
+                                snippet = doc.content.substring(0, 80).replace(/\n/g, ' ') + '...';
+                            }
+                            matches.push({
+                                key: doc.key,
+                                title: doc.title,
+                                group: doc.group,
+                                snippet: snippet,
+                                score: titleMatch ? 10 : 1
+                            });
+                        }
+                    }
+                    
+                    matches.sort((a, b) => b.score - a.score);
+                    
+                    if (matches.length === 0) {
+                        results.innerHTML = `<div class="p-3 text-sm text-slate-400 text-center">Ничего не найдено</div>`;
+                    } else {
+                        results.innerHTML = matches.map(m => `
+                            <div class="search-result-item p-3 hover:bg-white/5 rounded-lg cursor-pointer transition-colors duration-150 mb-1" data-key="${m.key}" data-query="${escapeHtml(query)}">
+                                <div class="text-xs text-purple-400 font-medium uppercase mb-0.5">${m.group}</div>
+                                <div class="text-sm font-semibold text-white">${highlightSearchQueryText(m.title, query)}</div>
+                                <div class="text-xs text-slate-400 mt-1 font-mono">${highlightSearchQueryText(m.snippet, query)}</div>
+                            </div>
+                        `).join('');
+                    }
+                    
+                    results.classList.remove('hidden');
+                });
+            });
+            
+            // Close dropdowns if clicking outside
+            document.addEventListener('click', (e) => {
+                const isSearchClick = inputs.some(id => e.target.closest(`#${id}`)) || resultsDivs.some(id => e.target.closest(`#${id}`));
+                if (!isSearchClick) {
+                    resultsDivs.forEach(id => {
+                        const div = document.getElementById(id);
+                        if (div) div.classList.add('hidden');
+                    });
+                }
+            });
+        }
+
+        // Highlight matching query text helper
+        function highlightSearchQueryText(text, query) {
+            if (!query) return escapeHtml(text);
+            const escapedQuery = query.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            const regex = new RegExp(`(${escapedQuery})`, 'gi');
+            return escapeHtml(text).replace(regex, '<mark class="bg-purple-500/35 text-purple-200 px-0.5 rounded font-semibold">$1</mark>');
+        }
+
+        // Click listener on search results
+        document.addEventListener('click', (e) => {
+            const resultItem = e.target.closest('.search-result-item');
+            if (resultItem) {
+                const key = resultItem.getAttribute('data-key');
+                const query = resultItem.getAttribute('data-query');
+                
+                activeSearchQuery = query;
+                
+                if (window.innerWidth < 1024) {
+                    toggleSidebar(false);
+                }
+                
+                // Navigate
+                location.hash = key;
+                
+                // Clear search fields
+                ['search-input', 'mobile-search-input'].forEach(id => {
+                    const inp = document.getElementById(id);
+                    if (inp) inp.value = '';
+                });
+                ['search-results', 'mobile-search-results'].forEach(id => {
+                    const div = document.getElementById(id);
+                    if (div) {
+                        div.innerHTML = '';
+                        div.classList.add('hidden');
+                    }
+                });
+                
+                // Close mobile search bar overlay
+                mobileSearchBar.classList.add('hidden');
+            }
+        });
+
+        // DOM search term highlighter on document load
+        function highlightSearchTerm(element, term) {
+            if (!term) return;
+            const walk = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false);
+            const textNodes = [];
+            let node;
+            while (node = walk.nextNode()) {
+                const parentTag = node.parentElement.tagName.toLowerCase();
+                if (parentTag === 'code' || parentTag === 'pre' || parentTag === 'script' || parentTag === 'style' || parentTag === 'a' || parentTag === 'h1' || parentTag === 'h2' || parentTag === 'h3' || parentTag === 'h4') {
+                    continue;
+                }
+                if (node.nodeValue.toLowerCase().includes(term.toLowerCase())) {
+                    textNodes.push(node);
+                }
+            }
+            
+            textNodes.forEach(node => {
+                const parent = node.parentElement;
+                if (!parent) return;
+                const text = node.nodeValue;
+                const escapedTerm = term.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+                const regex = new RegExp(`(${escapedTerm})`, 'gi');
+                
+                const span = document.createElement('span');
+                span.innerHTML = escapeHtml(text).replace(regex, '<mark class="bg-yellow-500/25 text-yellow-200 px-0.5 rounded font-medium">$1</mark>');
+                parent.replaceChild(span, node);
+            });
+        }
+
+        // Resolves paths relative to current route for SPA routing mapping
+        function resolveRoutePath(current, target) {
+            const currentParts = current.split('/');
+            currentParts.pop(); // pop current filename, keep parent dir path
+            
+            const targetParts = target.split('/');
+            for (const part of targetParts) {
+                if (part === '..') {
+                    currentParts.pop();
+                } else if (part !== '.' && part !== '') {
+                    currentParts.push(part);
+                }
+            }
+            return currentParts.join('/').toLowerCase();
+        }
+
+        // Intercept relative md links inside rendered document area
+        document.getElementById('content-body').addEventListener('click', (e) => {
+            const link = e.target.closest('a');
+            if (!link) return;
+            
+            const href = link.getAttribute('href');
+            if (!href) return;
+            
+            if (href.startsWith('http://') || href.startsWith('https://') || href.startsWith('//') || href.startsWith('mailto:') || href.startsWith('tel:')) {
+                // Let normal absolute links navigate away
+                return;
+            }
+            
+            // Check if link goes to a markdown file
+            const mdMatch = href.match(/^([^#?]+)\.md(?:#([^?]+))?/i);
+            if (mdMatch) {
+                e.preventDefault();
+                activeSearchQuery = ''; // Clear search highlight on click
+                
+                const mdPath = mdMatch[1];
+                const anchor = mdMatch[2];
+                const resolved = resolveRoutePath(currentRoute, mdPath);
+                
+                location.hash = resolved + (anchor ? '#' + anchor : '');
+                return;
+            }
+            
+            // Check if link goes to an anchor on the same page
+            if (href.startsWith('#')) {
+                e.preventDefault();
+                const anchor = href.substring(1);
+                
+                // If it is a route itself, navigate to it
+                if (window.docsData[anchor.toLowerCase()]) {
+                    location.hash = anchor.toLowerCase();
+                } else {
+                    // It's a local section anchor
+                    location.hash = currentRoute + '#' + anchor;
+                }
+            }
+        });
+
+        // Clear search highlight when navigating sidebar
+        sidebar.addEventListener('click', (e) => {
+            if (e.target.closest('.sidebar-link')) {
+                activeSearchQuery = '';
+            }
+        });
+
+        // ToC right sidebar generation
+        function renderTableOfContents() {
+            const list = document.getElementById('toc-list');
+            const headings = document.querySelectorAll('#content-body h2, #content-body h3');
+            
+            if (headings.length === 0) {
+                list.innerHTML = '<li class="text-slate-500 text-xs italic px-3">Нет подразделов</li>';
+                return;
+            }
+            
+            list.innerHTML = Array.from(headings).map(h => {
+                const id = h.id;
+                const textNode = h.querySelector('.heading-text');
+                const text = textNode ? textNode.textContent : h.textContent;
+                const indent = h.tagName.toLowerCase() === 'h3' ? 'pl-5 text-xs' : 'pl-3 text-sm';
+                
+                return `
+                    <li class="mb-2">
+                        <a href="#${currentRoute}#${id}" data-id="${id}" class="toc-link block text-slate-400 hover:text-white transition-all duration-150 py-0.5 ${indent}">
+                            ${text}
+                        </a>
+                    </li>
+                `;
+            }).join('');
+            
+            setupTocObserver();
+        }
+
+        // Smooth scroll ToC clicks
+        document.getElementById('toc-list').addEventListener('click', (e) => {
+            const link = e.target.closest('.toc-link');
+            if (link) {
+                e.preventDefault();
+                activeSearchQuery = ''; // Clear highlights on click
+                
+                const id = link.getAttribute('data-id');
+                const target = document.getElementById(id);
+                if (target) {
+                    history.pushState(null, null, `#${currentRoute}#${id}`);
+                    
+                    const headerOffset = 100;
+                    const elementPosition = target.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                    
+                    updateActiveToc(id);
+                }
+            }
+        });
+
+        // Scroll active heading tracker
+        function setupTocObserver() {
+            if (tocObserver) {
+                tocObserver.disconnect();
+            }
+            
+            const headings = Array.from(document.querySelectorAll('#content-body h2, #content-body h3'));
+            if (headings.length === 0) return;
+            
+            const options = {
+                root: null,
+                rootMargin: '-90px 0px -75% 0px',
+                threshold: 0
+            };
+            
+            tocObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        updateActiveToc(entry.target.id);
+                    }
+                });
+            }, options);
+            
+            headings.forEach(h => tocObserver.observe(h));
+        }
+
+        function updateActiveToc(activeId) {
+            document.querySelectorAll('.toc-link').forEach(link => {
+                if (link.getAttribute('data-id') === activeId) {
+                    link.classList.add('text-purple-400', 'font-medium', 'border-l-2', 'border-purple-500', 'pl-2');
+                    link.classList.remove('text-slate-400');
+                } else {
+                    link.classList.remove('text-purple-400', 'font-medium', 'border-l-2', 'border-purple-500', 'pl-2');
+                    link.classList.add('text-slate-400');
+                }
+            });
+        }
+
+        // Pagination buttons logic
+        function updatePagination(currentKey) {
+            const idx = articleOrder.indexOf(currentKey);
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const prevTitle = document.getElementById('prev-title');
+            const nextTitle = document.getElementById('next-title');
+            
+            if (idx > 0) {
+                const prevKey = articleOrder[idx - 1];
+                const prevDoc = window.docsData[prevKey];
+                prevBtn.setAttribute('href', `#${prevKey}`);
+                prevTitle.textContent = prevDoc.title;
+                prevBtn.style.visibility = 'visible';
+            } else {
+                prevBtn.style.visibility = 'hidden';
+            }
+            
+            if (idx >= 0 && idx < articleOrder.length - 1) {
+                const nextKey = articleOrder[idx + 1];
+                const nextDoc = window.docsData[nextKey];
+                nextBtn.setAttribute('href', `#${nextKey}`);
+                nextTitle.textContent = nextDoc.title;
+                nextBtn.style.visibility = 'visible';
+            } else {
+                nextBtn.style.visibility = 'hidden';
+            }
+        }
+
+        // Load document content onto page
+        function renderDocument(doc, anchor) {
+            document.title = `${doc.title} | Repin 2.0 Docs`;
+            
+            document.getElementById('breadcrumbs').textContent = `${doc.group} / ${doc.title}`;
+            document.getElementById('article-title').textContent = doc.title;
+            
+            const contentBody = document.getElementById('content-body');
+            
+            // Marked compiler output
+            let html = marked.parse(doc.content);
+            
+            // Adjust relative asset folders for web serving
+            html = html.replace(/src="assets\//gi, 'src="../docs/assets/');
+            html = html.replace(/src="\.\.\/assets\//gi, 'src="../docs/assets/');
+            
+            contentBody.innerHTML = html;
+            
+            // Highlight code blocks
+            document.querySelectorAll('pre code').forEach((block) => {
+                if (window.hljs) {
+                    hljs.highlightElement(block);
+                }
+            });
+            
+            // Highlight search term matches if loaded from search
+            if (activeSearchQuery) {
+                highlightSearchTerm(contentBody, activeSearchQuery);
+            }
+            
+            // Render Mermaid charts
+            try {
+                if (window.mermaid) {
+                    mermaid.run({
+                        nodes: document.querySelectorAll('.mermaid')
+                    });
+                }
+            } catch (err) {
+                console.error('Mermaid render error:', err);
+            }
+            
+            // Re-render Table of Contents
+            renderTableOfContents();
+            
+            // Set paginator
+            updatePagination(doc.key);
+            
+            // Scroll control
+            if (anchor) {
+                setTimeout(() => {
+                    const target = document.getElementById(anchor);
+                    if (target) {
+                        const headerOffset = 100;
+                        const elementPosition = target.getBoundingClientRect().top;
+                        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                        
+                        window.scrollTo({
+                            top: offsetPosition,
+                            behavior: 'smooth'
+                        });
+                        updateActiveToc(anchor);
+                    }
+                }, 100);
+            } else {
+                window.scrollTo({ top: 0, behavior: 'instant' });
+            }
+        }
+
+        // Main routing navigate switch
+        function navigate() {
+            const fullHash = decodeURIComponent(location.hash.substring(1));
+            const parts = fullHash.split('#');
+            let route = parts[0] || 'index';
+            const anchor = parts[1];
+            
+            route = route.replace(/\.md$/i, '').toLowerCase();
+            
+            const doc = window.docsData[route];
+            if (!doc) {
+                if (route !== 'index') {
+                    location.hash = 'index';
+                    return;
+                }
+            }
+            
+            currentRoute = route;
+            updateSidebarActiveState(route);
+            renderDocument(doc, anchor);
+        }
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check if docsData is loaded
+            if (!window.docsData) {
+                console.error("Documentation data (docs_data.js) is not loaded!");
+                const contentBody = document.getElementById('content-body');
+                if (contentBody) {
+                    contentBody.innerHTML = `
+                        <div class="my-6 p-6 rounded-xl border border-red-500/20 bg-red-500/10 text-red-200">
+                            <h3 class="font-bold text-white mb-2">Ошибка загрузки данных</h3>
+                            <p>Не удалось загрузить файл <code>docs_data.js</code>. Пожалуйста, запустите скрипт <code>sync_docs.py</code> для генерации базы данных документации.</p>
+                        </div>
+                    `;
+                }
+                const titleNode = document.getElementById('article-title');
+                if (titleNode) titleNode.textContent = "Ошибка";
+                return;
+            }
+
+            if (window.mermaid) {
+                try {
+                    mermaid.initialize({ 
+                        startOnLoad: false, 
+                        theme: 'dark',
+                        securityLevel: 'loose'
+                    });
+                } catch (e) {
+                    console.error("Mermaid initialization failed:", e);
+                }
+            }
+            
+            if (window.marked) {
+                try {
+                    configureMarked();
+                } catch (e) {
+                    console.error("Marked configuration failed:", e);
+                }
+            }
+            
+            try {
+                buildSidebar();
+                setupSearch();
+                
+                // Listeners
+                window.addEventListener('hashchange', navigate);
+                
+                // Run router on first load
+                navigate();
+            } catch (e) {
+                console.error("App initialization failed:", e);
+            }
+        });
+    </script>
+</body>
+</html>

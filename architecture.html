@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Архитектура | Repin 2.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        glass: {
+                            100: 'rgba(255, 255, 255, 0.05)',
+                            200: 'rgba(255, 255, 255, 0.1)',
+                            300: 'rgba(255, 255, 255, 0.2)',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0b0f19;
+            color: #f8fafc;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* Glassmorphism Styles */
+        .glass-panel {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .glass-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            border-left: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px 0 rgba(168, 85, 247, 0.2);
+            border-top: 1px solid rgba(168, 85, 247, 0.4);
+            border-left: 1px solid rgba(168, 85, 247, 0.4);
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+        }
+
+        .glass-button {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .glass-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 20px rgba(168, 85, 247, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* SVG Animations */
+        @keyframes blob-float {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(50px, -50px) scale(1.1); }
+            66% { transform: translate(-30px, 30px) scale(0.9); }
+            100% { transform: translate(0px, 0px) scale(1); }
+        }
+
+        .animate-blob {
+            animation: blob-float 12s infinite alternate ease-in-out;
+        }
+        
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
+
+        /* Fade In Animation for Intersection Observer */
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+            will-change: opacity, visibility;
+        }
+        
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: none;
+        }
+
+        /* Animated Gradient Text */
+        .text-gradient {
+            background: linear-gradient(to right, #a855f7, #3b82f6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: text-shine 4s linear infinite;
+        }
+
+        @keyframes text-shine {
+            to { background-position: 200% center; }
+        }
+
+        .flow-arrow {
+            color: rgba(148, 163, 184, 0.75);
+        }
+
+        .layer-stage {
+            background: radial-gradient(circle at 18% 18%, rgba(168, 85, 247, 0.2), transparent 30%),
+                        radial-gradient(circle at 76% 62%, rgba(59, 130, 246, 0.18), transparent 32%),
+                        linear-gradient(145deg, rgba(15, 23, 42, 0.62), rgba(2, 6, 23, 0.74));
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 0 55px rgba(15, 23, 42, 0.62), 0 20px 70px rgba(15, 23, 42, 0.35);
+        }
+
+        .signal-line {
+            stroke-dasharray: 12 18;
+            animation: signal-flow 3s linear infinite;
+        }
+
+        .signal-line.delay-1 { animation-delay: 0.45s; }
+        .signal-line.delay-2 { animation-delay: 0.9s; }
+        .signal-line.delay-3 { animation-delay: 1.35s; }
+
+        @keyframes signal-flow {
+            to { stroke-dashoffset: -96; }
+        }
+
+        .signal-ribbon {
+            animation: ribbon-breathe 4s ease-in-out infinite;
+        }
+
+        @keyframes ribbon-breathe {
+            0%, 100% { opacity: 0.22; }
+            50% { opacity: 0.46; }
+        }
+
+        .weight-thread {
+            stroke-dasharray: 4 10;
+            animation: signal-flow 4.5s linear infinite reverse;
+        }
+
+        .neuron-dot {
+            animation: neuron-pulse 2.6s ease-in-out infinite;
+            filter: drop-shadow(0 0 8px currentColor);
+            transform-box: fill-box;
+            transform-origin: center;
+        }
+
+        .neuron-dot.delay-1 { animation-delay: 0.35s; }
+        .neuron-dot.delay-2 { animation-delay: 0.7s; }
+        .neuron-dot.delay-3 { animation-delay: 1.05s; }
+
+        @keyframes neuron-pulse {
+            0%, 100% { opacity: 0.45; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.15); }
+        }
+
+        .matrix-pixel {
+            animation: pixel-spark 3.4s ease-in-out infinite;
+            transform-box: fill-box;
+            transform-origin: center;
+        }
+
+        .matrix-pixel.delay-1 { animation-delay: 0.35s; }
+        .matrix-pixel.delay-2 { animation-delay: 0.7s; }
+        .matrix-pixel.delay-3 { animation-delay: 1.05s; }
+
+        @keyframes pixel-spark {
+            0%, 100% { opacity: 0.5; transform: scale(0.96); }
+            45%, 60% { opacity: 1; transform: scale(1.08); }
+        }
+
+        .activation-bar {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .activation-bar::after {
+            animation: activation-scan 3.2s ease-in-out infinite;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.75), transparent);
+            content: "";
+            inset: 0;
+            position: absolute;
+            transform: translateX(-100%);
+        }
+
+        @keyframes activation-scan {
+            0% { transform: translateX(-100%); }
+            55%, 100% { transform: translateX(100%); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .signal-line,
+            .signal-ribbon,
+            .weight-thread,
+            .neuron-dot,
+            .matrix-pixel,
+            .activation-bar::after {
+                animation: none;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Анимированный фон -->
+    <div class="fixed inset-0 z-[-1] overflow-hidden pointer-events-none">
+        <div class="absolute top-[-10%] left-[-10%] w-[40rem] h-[40rem] bg-purple-700 rounded-full mix-blend-screen filter blur-[100px] opacity-40 animate-blob"></div>
+        <div class="absolute top-[20%] right-[-10%] w-[35rem] h-[35rem] bg-blue-700 rounded-full mix-blend-screen filter blur-[120px] opacity-30 animate-blob animation-delay-2000"></div>
+        <div class="absolute bottom-[-20%] left-[20%] w-[45rem] h-[45rem] bg-pink-700 rounded-full mix-blend-screen filter blur-[100px] opacity-30 animate-blob animation-delay-4000"></div>
+    </div>
+
+    <!-- Навигация -->
+    <nav class="fixed w-full z-50 glass-panel">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex items-center">
+                    <a href="index.html">
+                        <svg class="h-14 w-14 sm:h-16 sm:w-16 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                          <defs>
+                            <linearGradient id="repin-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" stop-color="#00f2ff" />
+                              <stop offset="100%" stop-color="#ff00ff" />
+                            </linearGradient>
+                            <linearGradient id="text-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                              <stop offset="0%" stop-color="#00f2ff" />
+                              <stop offset="100%" stop-color="#ff00ff" />
+                            </linearGradient>
+                            <style>
+                              .brush { fill: none; stroke: url(#repin-grad); stroke-width: 4.5; stroke-linecap: round; stroke-linejoin: round; }
+                              .net-line { fill: none; stroke: url(#repin-grad); stroke-width: 1.5; stroke-linecap: round; stroke-dasharray: 30; animation: drawLine 4s infinite cubic-bezier(0.4, 0, 0.2, 1); }
+                              .nl-1 { animation-delay: 0s; } .nl-2 { animation-delay: 0.3s; } .nl-3 { animation-delay: 0.6s; } .nl-4 { animation-delay: 0.9s; } .nl-5 { animation-delay: 1.2s; } .nl-6 { animation-delay: 1.5s; } .nl-7 { animation-delay: 1.8s; }
+                              @keyframes drawLine { 0% { stroke-dashoffset: 30; opacity: 0; } 15%, 85% { opacity: 1; } 40%, 60% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: -30; opacity: 0; } }
+                              .node { fill: url(#repin-grad); animation: pulseNode 1.5s infinite alternate ease-in-out; }
+                              .nd-1 { animation-delay: 0s; } .nd-2 { animation-delay: 0.4s; } .nd-3 { animation-delay: 0.8s; } .nd-4 { animation-delay: 1.2s; } .nd-5 { animation-delay: 1.6s; } .nd-6 { animation-delay: 2.0s; }
+                              @keyframes pulseNode { 0% { opacity: 0.4; } 100% { opacity: 1; } }
+                              .logo-text { font-family: 'Inter', sans-serif; font-weight: 800; font-size: 11px; letter-spacing: 0.15em; fill: url(#text-grad); text-anchor: middle; }
+                            </style>
+                          </defs>
+                          <path class="net-line nl-1" d="M 39,42 L 56,50" />
+                          <path class="net-line nl-2" d="M 39,42 L 46,62" />
+                          <path class="net-line nl-3" d="M 56,50 L 66,45" />
+                          <path class="net-line nl-4" d="M 56,50 L 62,65" />
+                          <path class="net-line nl-5" d="M 46,62 L 62,65" />
+                          <path class="net-line nl-6" d="M 66,45 L 76,58" />
+                          <path class="net-line nl-7" d="M 62,65 L 76,58" />
+                          <path class="brush" d="M 26,60 C 29,45 26,25 30,15 C 49,12 59,28 44,40 C 39,43 32,40 27,38" />
+                          <circle class="node nd-1" cx="39" cy="42" r="2.5" />
+                          <circle class="node nd-2" cx="56" cy="50" r="2.5" />
+                          <circle class="node nd-3" cx="46" cy="62" r="2.5" />
+                          <circle class="node nd-4" cx="66" cy="45" r="2.5" />
+                          <circle class="node nd-5" cx="62" cy="65" r="2.5" />
+                          <circle class="node nd-6" cx="76" cy="58" r="2.5" />
+                          <text x="51.5" y="88" class="logo-text">REPIN 2.0</text>
+                        </svg>
+                    </a>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="index.html#features" class="text-gray-300 hover:text-white transition-colors duration-300 px-3 py-2 rounded-md text-sm font-medium">Особенности</a>
+                        <a href="index.html#showcase" class="text-gray-300 hover:text-white transition-colors duration-300 px-3 py-2 rounded-md text-sm font-medium">Галерея</a>
+                        <a href="architecture.html" class="text-white border-b-2 border-purple-500 transition-colors duration-300 px-3 py-2 text-sm font-medium">Архитектура</a>
+                        <a href="https://github.com/zzzigrok/repin-2.0" target="_blank" class="glass-button px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+                            GitHub
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Главный контент -->
+    <main class="pt-32 pb-16 sm:pt-40 sm:pb-24 overflow-hidden min-h-screen">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <!-- Hero Section -->
+            <div class="text-center mb-16 fade-in-section">
+                <h1 class="text-5xl font-extrabold text-white sm:text-6xl">
+                    <span class="text-gradient">Архитектура</span> Модели
+                </h1>
+                <p class="mt-4 max-w-2xl mx-auto text-xl text-gray-400">
+                    Подробный разбор нейросетевых механизмов Repin 2.0
+                </p>
+            </div>
+
+            <!-- Architecture Summary -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-16 fade-in-section">
+                <div class="glass-card rounded-2xl p-5">
+                    <p class="text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">Тип модели</p>
+                    <p class="text-2xl font-bold text-white">GAN</p>
+                    <p class="text-sm text-gray-400 mt-2">Две сети обучаются в состязательном режиме.</p>
+                </div>
+                <div class="glass-card rounded-2xl p-5">
+                    <p class="text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">Latent space</p>
+                    <p class="text-2xl font-bold text-purple-300">64D</p>
+                    <p class="text-sm text-gray-400 mt-2">Компактный вектор шума задает будущий образ.</p>
+                </div>
+                <div class="glass-card rounded-2xl p-5">
+                    <p class="text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">Базовый кадр</p>
+                    <p class="text-2xl font-bold text-blue-300">28×28</p>
+                    <p class="text-sm text-gray-400 mt-2">784 значения после разворачивания изображения.</p>
+                </div>
+                <div class="glass-card rounded-2xl p-5">
+                    <p class="text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">Финальный PNG</p>
+                    <p class="text-2xl font-bold text-pink-300">224×224</p>
+                    <p class="text-sm text-gray-400 mt-2">Апскейл ×8 сохраняет пиксельную эстетику.</p>
+                </div>
+            </div>
+
+            <!-- GAN Concept -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16 fade-in-section">
+                <!-- Generator Card -->
+                <div class="glass-card rounded-2xl p-8">
+                    <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-green-500/20 flex items-center justify-center text-green-400">G</span>
+                        Генератор (Generator)
+                    </h2>
+                    <p class="text-gray-400 mb-6">
+                        Многослойный перцептрон (MLP), который превращает случайный шум в изображение. Его задача — обмануть Дискриминатор, создавая всё более реалистичные подделки.
+                    </p>
+                    <div class="bg-black/30 rounded-xl p-4 font-mono text-sm text-gray-300">
+                        <div class="flex justify-between border-b border-white/5 pb-2 mb-2">
+                            <span>Вход (Латентный вектор):</span>
+                            <span class="text-purple-400">z ∈ ℝ⁶⁴</span>
+                        </div>
+                        <div class="space-y-2">
+                            <p class="flex justify-between"><span>Слой 1: Linear(64 → 256)</span><span class="text-gray-500">+ ReLU</span></p>
+                            <p class="flex justify-between"><span>Слой 2: Linear(256 → 512)</span><span class="text-gray-500">+ ReLU</span></p>
+                            <p class="flex justify-between"><span>Слой 3: Linear(512 → 784)</span><span class="text-gray-500">+ Tanh</span></p>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-white/5 flex justify-between">
+                            <span>Выход:</span>
+                            <span class="text-green-400">28×28 (Pixel Art)</span>
+                        </div>
+                    </div>
+                    <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                        <div class="bg-white/5 rounded-xl p-3 border border-white/10">
+                            <p class="text-gray-500 mb-1">Параметры</p>
+                            <p class="font-semibold text-gray-200">≈ 530K</p>
+                        </div>
+                        <div class="bg-white/5 rounded-xl p-3 border border-white/10">
+                            <p class="text-gray-500 mb-1">Диапазон</p>
+                            <p class="font-semibold text-gray-200">[-1, 1]</p>
+                        </div>
+                        <div class="bg-white/5 rounded-xl p-3 border border-white/10">
+                            <p class="text-gray-500 mb-1">Роль</p>
+                            <p class="font-semibold text-gray-200">Синтез</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Discriminator Card -->
+                <div class="glass-card rounded-2xl p-8">
+                    <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-red-500/20 flex items-center justify-center text-red-400">D</span>
+                        Дискриминатор (Discriminator)
+                    </h2>
+                    <p class="text-gray-400 mb-6">
+                        Критик-классификатор, обучающийся отличать реальные изображения от подделок Генератора. Его задача — выставлять высокую вероятность для настоящих данных.
+                    </p>
+                    <div class="bg-black/30 rounded-xl p-4 font-mono text-sm text-gray-300">
+                        <div class="flex justify-between border-b border-white/5 pb-2 mb-2">
+                            <span>Вход:</span>
+                            <span class="text-blue-400">784 (Flattened Image)</span>
+                        </div>
+                        <div class="space-y-2">
+                            <p class="flex justify-between"><span>Слой 1: Linear(784 → 512)</span><span class="text-gray-500">+ LeakyReLU</span></p>
+                            <p class="flex justify-between"><span>Слой 2: Linear(512 → 256)</span><span class="text-gray-500">+ LeakyReLU</span></p>
+                            <p class="flex justify-between"><span>Слой 3: Linear(256 → 1)</span><span class="text-gray-500">+ Sigmoid</span></p>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-white/5 flex justify-between">
+                            <span>Выход:</span>
+                            <span class="text-red-400">p ∈ [0, 1]</span>
+                        </div>
+                    </div>
+                    <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+                        <div class="bg-white/5 rounded-xl p-3 border border-white/10">
+                            <p class="text-gray-500 mb-1">Параметры</p>
+                            <p class="font-semibold text-gray-200">≈ 530K</p>
+                        </div>
+                        <div class="bg-white/5 rounded-xl p-3 border border-white/10">
+                            <p class="text-gray-500 mb-1">Leaky slope</p>
+                            <p class="font-semibold text-gray-200">0.2</p>
+                        </div>
+                        <div class="bg-white/5 rounded-xl p-3 border border-white/10">
+                            <p class="text-gray-500 mb-1">Роль</p>
+                            <p class="font-semibold text-gray-200">Критик</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Flow -->
+            <div class="glass-card rounded-3xl p-8 sm:p-12 mb-16 fade-in-section">
+                <h2 class="text-3xl font-bold text-white mb-4 text-center">Поток данных</h2>
+                <p class="max-w-3xl mx-auto text-center text-gray-400 mb-10">
+                    Repin 2.0 намеренно оставляет архитектуру компактной: модель легко обучать, проверять и переносить между CPU и Intel XPU, а каждый этап преобразования прозрачен.
+                </p>
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-4 items-stretch text-center">
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <p class="text-sm text-purple-300 font-semibold mb-2">1. Шум</p>
+                        <p class="font-mono text-gray-200">z ~ N(0, 1)</p>
+                        <p class="text-xs text-gray-500 mt-2">[B, 64]</p>
+                    </div>
+                    <div class="hidden lg:flex items-center justify-center text-3xl flow-arrow">→</div>
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <p class="text-sm text-green-300 font-semibold mb-2">2. Генератор</p>
+                        <p class="font-mono text-gray-200">G(z)</p>
+                        <p class="text-xs text-gray-500 mt-2">[B, 784]</p>
+                    </div>
+                    <div class="hidden lg:flex items-center justify-center text-3xl flow-arrow">→</div>
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <p class="text-sm text-blue-300 font-semibold mb-2">3. Изображение</p>
+                        <p class="font-mono text-gray-200">reshape</p>
+                        <p class="text-xs text-gray-500 mt-2">[B, 1, 28, 28]</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 text-center">
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <p class="text-sm text-pink-300 font-semibold mb-2">4. Денормализация</p>
+                        <p class="font-mono text-gray-200">(x + 1) / 2</p>
+                        <p class="text-xs text-gray-500 mt-2">[-1, 1] → [0, 1]</p>
+                    </div>
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <p class="text-sm text-cyan-300 font-semibold mb-2">5. Апскейл</p>
+                        <p class="font-mono text-gray-200">nearest ×8</p>
+                        <p class="text-xs text-gray-500 mt-2">без размытия краев</p>
+                    </div>
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <p class="text-sm text-white font-semibold mb-2">6. Экспорт</p>
+                        <p class="font-mono text-gray-200">PNG grid</p>
+                        <p class="text-xs text-gray-500 mt-2">224×224 на изображение</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Internal Layer Visualization -->
+            <div class="glass-card rounded-3xl p-8 sm:p-12 mb-16 fade-in-section">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-white mb-4">Визуализация внутренних слоёв</h2>
+                    <p class="max-w-3xl mx-auto text-gray-400">
+                        Схема показывает, как латентный вектор расширяется в скрытое представление, насыщается признаками и сжимается в 784 пиксельных значения будущего изображения.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 xl:grid-cols-[1.6fr_1fr] gap-8 items-stretch">
+                    <div class="layer-stage rounded-3xl p-4 sm:p-6 overflow-hidden">
+                        <svg class="w-full h-auto min-h-[300px]" viewBox="0 0 1000 460" role="img" aria-labelledby="inner-layers-title inner-layers-desc" xmlns="http://www.w3.org/2000/svg">
+                            <title id="inner-layers-title">Внутренние слои генератора Repin 2.0</title>
+                            <desc id="inner-layers-desc">Поток данных проходит от латентного вектора 64D через слои 256 и 512 к выходному вектору 784.</desc>
+                            <defs>
+                                <pattern id="stage-grid" width="32" height="32" patternUnits="userSpaceOnUse">
+                                    <path d="M32 0H0V32" fill="none" stroke="rgba(148, 163, 184, 0.08)" stroke-width="1" />
+                                </pattern>
+                                <linearGradient id="signal-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#a855f7" />
+                                    <stop offset="50%" stop-color="#3b82f6" />
+                                    <stop offset="100%" stop-color="#ec4899" />
+                                </linearGradient>
+                                <linearGradient id="signal-hot" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#c4b5fd" stop-opacity="0.1" />
+                                    <stop offset="45%" stop-color="#60a5fa" stop-opacity="0.55" />
+                                    <stop offset="100%" stop-color="#f472b6" stop-opacity="0.14" />
+                                </linearGradient>
+                                <linearGradient id="layer-panel" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="rgba(255,255,255,0.09)" />
+                                    <stop offset="100%" stop-color="rgba(255,255,255,0.025)" />
+                                </linearGradient>
+                                <linearGradient id="pixel-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#1d4ed8" />
+                                    <stop offset="55%" stop-color="#a855f7" />
+                                    <stop offset="100%" stop-color="#f472b6" />
+                                </linearGradient>
+                                <linearGradient id="readout-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" stop-color="#a78bfa" />
+                                    <stop offset="50%" stop-color="#22c55e" />
+                                    <stop offset="100%" stop-color="#60a5fa" />
+                                </linearGradient>
+                                <filter id="layer-glow" x="-40%" y="-40%" width="180%" height="180%">
+                                    <feGaussianBlur stdDeviation="5" result="blur" />
+                                    <feMerge>
+                                        <feMergeNode in="blur" />
+                                        <feMergeNode in="SourceGraphic" />
+                                    </feMerge>
+                                </filter>
+                                <filter id="soft-shadow" x="-30%" y="-30%" width="160%" height="160%">
+                                    <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#020617" flood-opacity="0.55" />
+                                </filter>
+                            </defs>
+
+                            <rect x="18" y="20" width="964" height="374" rx="34" fill="rgba(2, 6, 23, 0.58)" stroke="rgba(255,255,255,0.08)" />
+                            <rect x="18" y="20" width="964" height="374" rx="34" fill="url(#stage-grid)" opacity="0.55" />
+                            <path d="M86 326 C235 252 315 354 462 264 S705 270 900 118" fill="none" stroke="rgba(168,85,247,0.16)" stroke-width="82" stroke-linecap="round" class="signal-ribbon" />
+                            <path d="M106 96 C245 76 318 118 430 152 S626 218 742 172 S835 108 914 158" fill="none" stroke="url(#signal-hot)" stroke-width="58" stroke-linecap="round" class="signal-ribbon" />
+
+                            <g stroke="rgba(148, 163, 184, 0.18)" stroke-width="1.2" fill="none">
+                                <path class="weight-thread" d="M166 118 C210 98 242 96 288 118" />
+                                <path class="weight-thread" d="M166 164 C218 170 242 154 288 145" />
+                                <path class="weight-thread" d="M166 218 C214 230 244 204 288 178" />
+                                <path class="weight-thread" d="M166 272 C220 256 244 244 288 210" />
+                                <path class="weight-thread" d="M414 108 C456 92 492 96 534 124" />
+                                <path class="weight-thread" d="M414 155 C464 180 492 184 534 158" />
+                                <path class="weight-thread" d="M414 212 C462 226 494 244 534 214" />
+                                <path class="weight-thread" d="M414 274 C462 286 492 274 534 254" />
+                                <path class="weight-thread" d="M662 112 C706 104 736 112 778 132" />
+                                <path class="weight-thread" d="M662 164 C708 154 738 164 778 170" />
+                                <path class="weight-thread" d="M662 220 C710 232 736 230 778 212" />
+                                <path class="weight-thread" d="M662 282 C708 274 738 252 778 236" />
+                            </g>
+
+                            <g stroke="url(#signal-grad)" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.86">
+                                <path class="signal-line" d="M158 112 C245 78 304 92 382 132 S552 198 634 154 S784 112 878 170" />
+                                <path class="signal-line delay-1" d="M158 162 C242 158 308 182 382 166 S550 118 634 184 S786 248 878 212" />
+                                <path class="signal-line delay-2" d="M158 220 C244 254 310 218 382 226 S548 286 634 228 S786 158 878 246" />
+                                <path class="signal-line delay-3" d="M158 278 C240 318 314 278 382 258 S548 214 634 288 S790 306 878 272" />
+                            </g>
+
+                            <g font-family="Inter, sans-serif" text-anchor="middle">
+                                <g transform="translate(70 56)" filter="url(#soft-shadow)">
+                                    <rect width="116" height="268" rx="24" fill="url(#layer-panel)" stroke="rgba(196,181,253,0.2)" />
+                                    <text x="58" y="32" fill="#c4b5fd" font-size="13" font-weight="800">LATENT</text>
+                                    <text x="58" y="52" fill="#94a3b8" font-size="11">64D seed</text>
+                                    <line x1="58" y1="74" x2="58" y2="222" stroke="rgba(196,181,253,0.16)" stroke-width="1" />
+                                    <circle class="neuron-dot" cx="58" cy="91" r="8" fill="#c084fc" />
+                                    <circle class="neuron-dot delay-1" cx="58" cy="126" r="6" fill="#a78bfa" />
+                                    <circle class="neuron-dot delay-2" cx="58" cy="164" r="9" fill="#c084fc" />
+                                    <circle class="neuron-dot delay-3" cx="58" cy="204" r="7" fill="#a78bfa" />
+                                    <text x="58" y="246" fill="#e9d5ff" font-size="18" font-weight="800">z</text>
+                                </g>
+
+                                <g transform="translate(286 44)" filter="url(#soft-shadow)">
+                                    <rect width="132" height="292" rx="26" fill="url(#layer-panel)" stroke="rgba(134,239,172,0.2)" />
+                                    <text x="66" y="31" fill="#86efac" font-size="13" font-weight="800">LINEAR</text>
+                                    <text x="66" y="51" fill="#94a3b8" font-size="11">64→256 · ReLU</text>
+                                    <g opacity="0.55" stroke="rgba(134,239,172,0.2)">
+                                        <line x1="42" y1="76" x2="42" y2="224" />
+                                        <line x1="88" y1="76" x2="88" y2="224" />
+                                    </g>
+                                    <circle class="neuron-dot delay-1" cx="42" cy="82" r="6" fill="#22c55e" />
+                                    <circle class="neuron-dot" cx="88" cy="104" r="8" fill="#4ade80" />
+                                    <circle class="neuron-dot delay-2" cx="42" cy="133" r="7" fill="#22c55e" />
+                                    <circle class="neuron-dot delay-3" cx="88" cy="162" r="6" fill="#86efac" />
+                                    <circle class="neuron-dot delay-1" cx="42" cy="199" r="8" fill="#22c55e" />
+                                    <circle class="neuron-dot delay-2" cx="88" cy="230" r="6" fill="#4ade80" />
+                                    <rect x="28" y="254" width="76" height="8" rx="4" fill="rgba(15,23,42,0.7)" />
+                                    <rect class="matrix-pixel" x="28" y="254" width="48" height="8" rx="4" fill="#22c55e" />
+                                </g>
+
+                                <g transform="translate(530 44)" filter="url(#soft-shadow)">
+                                    <rect width="140" height="292" rx="26" fill="url(#layer-panel)" stroke="rgba(147,197,253,0.22)" />
+                                    <text x="70" y="31" fill="#93c5fd" font-size="13" font-weight="800">FEATURES</text>
+                                    <text x="70" y="51" fill="#94a3b8" font-size="11">256→512 · ReLU</text>
+                                    <g opacity="0.45" stroke="rgba(147,197,253,0.2)">
+                                        <line x1="36" y1="72" x2="36" y2="232" />
+                                        <line x1="70" y1="72" x2="70" y2="232" />
+                                        <line x1="104" y1="72" x2="104" y2="232" />
+                                    </g>
+                                    <circle class="neuron-dot delay-2" cx="36" cy="78" r="6" fill="#60a5fa" />
+                                    <circle class="neuron-dot" cx="70" cy="98" r="8" fill="#3b82f6" />
+                                    <circle class="neuron-dot delay-1" cx="104" cy="130" r="6" fill="#93c5fd" />
+                                    <circle class="neuron-dot delay-3" cx="36" cy="164" r="9" fill="#60a5fa" />
+                                    <circle class="neuron-dot delay-2" cx="104" cy="202" r="7" fill="#3b82f6" />
+                                    <circle class="neuron-dot delay-1" cx="36" cy="238" r="6" fill="#93c5fd" />
+                                    <circle class="neuron-dot" cx="70" cy="254" r="7" fill="#60a5fa" />
+                                    <rect x="30" y="272" width="80" height="6" rx="3" fill="url(#readout-grad)" opacity="0.75" />
+                                </g>
+
+                                <g transform="translate(778 44)" filter="url(#soft-shadow)">
+                                    <rect width="150" height="292" rx="26" fill="url(#layer-panel)" stroke="rgba(244,114,182,0.24)" />
+                                    <text x="75" y="31" fill="#f9a8d4" font-size="13" font-weight="800">RASTERIZE</text>
+                                    <text x="75" y="51" fill="#94a3b8" font-size="11">512→784 · Tanh</text>
+                                    <rect x="25" y="82" width="100" height="100" rx="18" fill="rgba(236, 72, 153, 0.1)" stroke="rgba(244, 114, 182, 0.45)" />
+                                    <g filter="url(#layer-glow)">
+                                        <rect class="matrix-pixel" x="43" y="101" width="12" height="12" rx="3" fill="#172554" />
+                                        <rect class="matrix-pixel delay-1" x="59" y="101" width="12" height="12" rx="3" fill="#7c3aed" />
+                                        <rect class="matrix-pixel delay-2" x="75" y="101" width="12" height="12" rx="3" fill="#db2777" />
+                                        <rect class="matrix-pixel delay-3" x="91" y="101" width="12" height="12" rx="3" fill="#1d4ed8" />
+                                        <rect class="matrix-pixel delay-1" x="43" y="117" width="12" height="12" rx="3" fill="#3b82f6" />
+                                        <rect class="matrix-pixel delay-2" x="59" y="117" width="12" height="12" rx="3" fill="#c084fc" />
+                                        <rect class="matrix-pixel delay-3" x="75" y="117" width="12" height="12" rx="3" fill="#f472b6" />
+                                        <rect class="matrix-pixel" x="91" y="117" width="12" height="12" rx="3" fill="#581c87" />
+                                        <rect class="matrix-pixel delay-2" x="43" y="133" width="12" height="12" rx="3" fill="#0f172a" />
+                                        <rect class="matrix-pixel delay-3" x="59" y="133" width="12" height="12" rx="3" fill="url(#pixel-grad)" />
+                                        <rect class="matrix-pixel" x="75" y="133" width="12" height="12" rx="3" fill="#a855f7" />
+                                        <rect class="matrix-pixel delay-1" x="91" y="133" width="12" height="12" rx="3" fill="#2563eb" />
+                                        <rect class="matrix-pixel delay-3" x="43" y="149" width="12" height="12" rx="3" fill="#e879f9" />
+                                        <rect class="matrix-pixel" x="59" y="149" width="12" height="12" rx="3" fill="#4f46e5" />
+                                        <rect class="matrix-pixel delay-1" x="75" y="149" width="12" height="12" rx="3" fill="#0f172a" />
+                                        <rect class="matrix-pixel delay-2" x="91" y="149" width="12" height="12" rx="3" fill="#f0abfc" />
+                                    </g>
+                                    <text x="75" y="214" fill="#fbcfe8" font-size="20" font-weight="800">28×28</text>
+                                    <text x="75" y="235" fill="#94a3b8" font-size="11">784 значений</text>
+                                    <rect x="34" y="256" width="82" height="7" rx="3.5" fill="rgba(15,23,42,0.72)" />
+                                    <rect class="matrix-pixel delay-2" x="34" y="256" width="62" height="7" rx="3.5" fill="#f472b6" />
+                                </g>
+
+                                <g transform="translate(62 405)">
+                                    <rect x="0" y="0" width="876" height="34" rx="17" fill="rgba(15,23,42,0.72)" stroke="rgba(255,255,255,0.08)" />
+                                    <rect x="18" y="13" width="196" height="8" rx="4" fill="#a78bfa" opacity="0.78" />
+                                    <rect x="246" y="13" width="196" height="8" rx="4" fill="#22c55e" opacity="0.76" />
+                                    <rect x="474" y="13" width="196" height="8" rx="4" fill="#60a5fa" opacity="0.76" />
+                                    <rect x="702" y="13" width="156" height="8" rx="4" fill="#f472b6" opacity="0.78" />
+                                    <text x="116" y="29" fill="#c4b5fd" font-size="9" font-weight="700">noise manifold</text>
+                                    <text x="344" y="29" fill="#bbf7d0" font-size="9" font-weight="700">stroke primitives</text>
+                                    <text x="572" y="29" fill="#bfdbfe" font-size="9" font-weight="700">composition field</text>
+                                    <text x="780" y="29" fill="#fbcfe8" font-size="9" font-weight="700">pixel logits</text>
+                                </g>
+                            </g>
+                        </svg>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-1 gap-4">
+                        <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="font-bold text-white">Расширение признаков</h3>
+                                <span class="text-xs font-mono text-green-300">64 → 256</span>
+                            </div>
+                            <p class="text-sm text-gray-400 mb-4">Первый слой превращает случайный seed в набор грубых направлений: расположение пятен, контраст и будущую геометрию штриха.</p>
+                            <div class="activation-bar h-2 rounded-full bg-gradient-to-r from-purple-500/40 via-green-400/70 to-blue-500/40"></div>
+                        </div>
+                        <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="font-bold text-white">Сборка композиции</h3>
+                                <span class="text-xs font-mono text-blue-300">256 → 512</span>
+                            </div>
+                            <p class="text-sm text-gray-400 mb-4">Средний слой несёт самую активную работу: смешивает признаки, удерживает разнообразие и формирует внутреннюю карту образа.</p>
+                            <div class="activation-bar h-2 rounded-full bg-gradient-to-r from-blue-500/40 via-purple-400/80 to-pink-500/40"></div>
+                        </div>
+                        <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                            <div class="flex items-center justify-between mb-3">
+                                <h3 class="font-bold text-white">Проекция в пиксели</h3>
+                                <span class="text-xs font-mono text-pink-300">512 → 784</span>
+                            </div>
+                            <p class="text-sm text-gray-400 mb-4">Последний слой переводит признаки в плоскую сетку 28×28, а Tanh ограничивает значения диапазоном [-1, 1].</p>
+                            <div class="activation-bar h-2 rounded-full bg-gradient-to-r from-pink-500/40 via-fuchsia-300/80 to-blue-500/40"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mathematics & Loss -->
+            <div class="glass-card rounded-3xl p-8 sm:p-12 mb-16 fade-in-section">
+                <h2 class="text-3xl font-bold text-white mb-8 text-center">Математика обучения</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                    <div>
+                        <h3 class="text-xl font-bold text-purple-400 mb-4">Минимаксная игра</h3>
+                        <p class="text-gray-400 leading-relaxed mb-6">
+                            Обучение GAN формулируется как антагонистическая игра с нулевой суммой между Генератором (G) и Дискриминатором (D). Математически это выражается через функцию ценности V(D, G).
+                        </p>
+                        <div class="bg-white/5 rounded-2xl p-6 border border-white/10 text-center overflow-x-auto">
+                            <code class="text-gray-200 text-xs sm:text-sm whitespace-nowrap">
+                                min_G max_D V(D, G) = 𝔼[log D(x)] + 𝔼[log(1 - D(G(z)))]
+                            </code>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-blue-400 mb-4">Loss-функция (BCELoss)</h3>
+                        <p class="text-gray-400 leading-relaxed mb-6">
+                            Используется бинарная кросс-энтропия. Дискриминатор минимизирует ошибку классификации, а Генератор стремится максимизировать вероятность ошибки Дискриминатора.
+                        </p>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between bg-white/5 p-4 rounded-xl border border-white/10">
+                                <span class="text-sm font-semibold text-gray-300">D на реальных</span>
+                                <span class="text-xs font-bold px-2 py-1 bg-green-500/20 text-green-400 rounded">Target: 1</span>
+                            </div>
+                            <div class="flex items-center justify-between bg-white/5 p-4 rounded-xl border border-white/10">
+                                <span class="text-sm font-semibold text-gray-300">D на фейках</span>
+                                <span class="text-xs font-bold px-2 py-1 bg-red-500/20 text-red-400 rounded">Target: 0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-10 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <h4 class="font-bold text-white mb-2">D на реальном батче</h4>
+                        <p class="text-sm text-gray-400">Реальные изображения MNIST нормализуются в диапазон [-1, 1], разворачиваются в 784 признака и получают целевую метку 1.</p>
+                    </div>
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <h4 class="font-bold text-white mb-2">D на фейках</h4>
+                        <p class="text-sm text-gray-400">Сгенерированные изображения передаются в дискриминатор через <span class="font-mono text-gray-300">detach()</span>, чтобы не обновлять генератор в фазе критика.</p>
+                    </div>
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <h4 class="font-bold text-white mb-2">G через D</h4>
+                        <p class="text-sm text-gray-400">Генератор получает целевую метку 1: он учится делать такие изображения, которые дискриминатор принимает за реальные.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Training Loop -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16 fade-in-section">
+                <div class="glass-card rounded-3xl p-8">
+                    <h2 class="text-3xl font-bold text-white mb-6">Цикл обучения</h2>
+                    <div class="space-y-5">
+                        <div class="flex gap-4">
+                            <span class="w-8 h-8 rounded-lg bg-red-500/20 text-red-300 flex items-center justify-center font-bold shrink-0">1</span>
+                            <div>
+                                <h3 class="font-bold text-white">Обновление дискриминатора</h3>
+                                <p class="text-gray-400 text-sm mt-1">Считаются две ошибки: на настоящих изображениях и на фейках. Их сумма обновляет только D.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <span class="w-8 h-8 rounded-lg bg-green-500/20 text-green-300 flex items-center justify-center font-bold shrink-0">2</span>
+                            <div>
+                                <h3 class="font-bold text-white">Обновление генератора</h3>
+                                <p class="text-gray-400 text-sm mt-1">Новый шум проходит через G, затем через D. Ошибка считается так, будто фейки должны быть реальными.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <span class="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-300 flex items-center justify-center font-bold shrink-0">3</span>
+                            <div>
+                                <h3 class="font-bold text-white">Баланс игры</h3>
+                                <p class="text-gray-400 text-sm mt-1">Если D слишком силен, градиент G ослабевает. Если G слишком силен, D перестает быть полезным критиком.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="glass-card rounded-3xl p-8">
+                    <h2 class="text-3xl font-bold text-white mb-6">Гиперпараметры</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="text-left text-gray-500 border-b border-white/10">
+                                    <th class="pb-3 font-semibold">Параметр</th>
+                                    <th class="pb-3 font-semibold">Значение</th>
+                                    <th class="pb-3 font-semibold">Зачем</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/5 text-gray-300">
+                                <tr><td class="py-3 font-mono">lr</td><td>0.0002</td><td class="text-gray-400">спокойный шаг AdamW</td></tr>
+                                <tr><td class="py-3 font-mono">betas</td><td>(0.5, 0.999)</td><td class="text-gray-400">меньше инерции в GAN</td></tr>
+                                <tr><td class="py-3 font-mono">weight_decay</td><td>1e-4</td><td class="text-gray-400">мягкая регуляризация</td></tr>
+                                <tr><td class="py-3 font-mono">loss</td><td>BCELoss</td><td class="text-gray-400">бинарная классификация real/fake</td></tr>
+                                <tr><td class="py-3 font-mono">dtype</td><td>bfloat16</td><td class="text-gray-400">экономия памяти при autocast</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tensor Map -->
+            <div class="glass-card rounded-3xl p-8 sm:p-12 mb-16 fade-in-section">
+                <h2 class="text-3xl font-bold text-white mb-8 text-center">Карта размерностей</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="text-left text-gray-500 border-b border-white/10">
+                                <th class="pb-3 font-semibold">Этап</th>
+                                <th class="pb-3 font-semibold">Тензор</th>
+                                <th class="pb-3 font-semibold">Размерность</th>
+                                <th class="pb-3 font-semibold">Комментарий</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5 text-gray-300">
+                            <tr><td class="py-3">Шум</td><td class="font-mono">z</td><td class="font-mono">[B, 64]</td><td class="text-gray-400">случайное зерно образа</td></tr>
+                            <tr><td class="py-3">G hidden 1</td><td class="font-mono">h1</td><td class="font-mono">[B, 256]</td><td class="text-gray-400">первичное расширение признаков</td></tr>
+                            <tr><td class="py-3">G hidden 2</td><td class="font-mono">h2</td><td class="font-mono">[B, 512]</td><td class="text-gray-400">более богатое внутреннее представление</td></tr>
+                            <tr><td class="py-3">G output</td><td class="font-mono">x_fake</td><td class="font-mono">[B, 784]</td><td class="text-gray-400">плоская карта 28×28</td></tr>
+                            <tr><td class="py-3">D input</td><td class="font-mono">x</td><td class="font-mono">[B, 784]</td><td class="text-gray-400">реальное или сгенерированное изображение</td></tr>
+                            <tr><td class="py-3">D output</td><td class="font-mono">p</td><td class="font-mono">[B, 1]</td><td class="text-gray-400">вероятность real-класса</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TensorZ Diagnostics -->
+            <div class="glass-card rounded-3xl p-8 sm:p-12 mb-16 fade-in-section">
+                <div class="text-center mb-8">
+                    <p class="text-xs uppercase tracking-[0.25em] text-purple-300 mb-3">tensorZ audit</p>
+                    <h2 class="text-3xl font-bold text-white">Реальные веса модели</h2>
+                    <p class="max-w-3xl mx-auto text-gray-400 mt-4">
+                        Данные ниже получены из консольной утилиты <span class="font-mono text-gray-300">tensorz</span> для файла <span class="font-mono text-gray-300">weights/repin_weights.pth</span>. Это снимок фактического состояния сохранённого генератора.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <p class="text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">Тензоров</p>
+                        <p class="text-2xl font-bold text-white">6</p>
+                    </div>
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <p class="text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">Параметров</p>
+                        <p class="text-2xl font-bold text-blue-300">550.4K</p>
+                    </div>
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <p class="text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">Память</p>
+                        <p class="text-2xl font-bold text-green-300">2.1 MB</p>
+                    </div>
+                    <div class="bg-white/5 rounded-2xl p-5 border border-white/10">
+                        <p class="text-xs uppercase tracking-[0.2em] text-gray-500 mb-2">Sparsity</p>
+                        <p class="text-2xl font-bold text-pink-300">0.00%</p>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto mb-8">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="text-left text-gray-500 border-b border-white/10">
+                                <th class="pb-3 font-semibold">Тензор</th>
+                                <th class="pb-3 font-semibold">Shape</th>
+                                <th class="pb-3 font-semibold">Тип</th>
+                                <th class="pb-3 font-semibold">Параметры</th>
+                                <th class="pb-3 font-semibold">Память</th>
+                                <th class="pb-3 font-semibold">Mean</th>
+                                <th class="pb-3 font-semibold">Min</th>
+                                <th class="pb-3 font-semibold">Max</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5 text-gray-300">
+                            <tr><td class="py-3 font-mono">net.0.weight</td><td>256x64</td><td>float32</td><td>16.4 K</td><td>64.0 KB</td><td>0.0077</td><td>-0.7723</td><td>0.8468</td></tr>
+                            <tr><td class="py-3 font-mono">net.0.bias</td><td>256</td><td>float32</td><td>256</td><td>1.0 KB</td><td>-0.3628</td><td>-2.1270</td><td>2.5104</td></tr>
+                            <tr><td class="py-3 font-mono">net.2.weight</td><td>512x256</td><td>float32</td><td>131.1 K</td><td>512.0 KB</td><td>-0.0667</td><td>-4.0907</td><td>1.1734</td></tr>
+                            <tr><td class="py-3 font-mono">net.2.bias</td><td>512</td><td>float32</td><td>512</td><td>2.0 KB</td><td>0.0891</td><td>-0.4240</td><td>0.6244</td></tr>
+                            <tr><td class="py-3 font-mono">net.4.weight</td><td>784x512</td><td>float32</td><td>401.4 K</td><td>1.53 MB</td><td>-0.0188</td><td>-3.8660</td><td>1.2479</td></tr>
+                            <tr><td class="py-3 font-mono">net.4.bias</td><td>784</td><td>float32</td><td>784</td><td>3.06 KB</td><td>-0.0958</td><td>-0.5487</td><td>0.2581</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-xl font-bold text-white mb-4">Гистограмма распределения</h3>
+                        <div class="space-y-3">
+                            <div>
+                                <div class="flex justify-between text-xs text-gray-400 mb-1"><span>[-0.4601, -0.1300]</span><span>102 059 · 18.54%</span></div>
+                                <div class="h-3 rounded-full bg-white/10 overflow-hidden"><div class="h-full bg-blue-400" style="width: 25.41%"></div></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs text-gray-400 mb-1"><span>[-0.1300, 0.2000]</span><span>401 518 · 72.95%</span></div>
+                                <div class="h-3 rounded-full bg-white/10 overflow-hidden"><div class="h-full bg-purple-400" style="width: 100%"></div></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs text-gray-400 mb-1"><span>[0.2000, 0.5301]</span><span>33 566 · 6.10%</span></div>
+                                <div class="h-3 rounded-full bg-white/10 overflow-hidden"><div class="h-full bg-pink-400" style="width: 8.36%"></div></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs text-gray-400 mb-1"><span>Остальные интервалы</span><span>13 273 · 2.41%</span></div>
+                                <div class="h-3 rounded-full bg-white/10 overflow-hidden"><div class="h-full bg-gray-400" style="width: 3.31%"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white mb-4">Интерпретация</h3>
+                        <div class="space-y-4 text-sm text-gray-400">
+                            <p>
+                                Основная масса весов сконцентрирована около нуля: диапазон от -0.1300 до 0.2000 содержит почти три четверти всех значений. Это нормальный признак компактной MLP-модели без разреживания.
+                            </p>
+                            <p>
+                                Самые широкие хвосты находятся в матрицах <span class="font-mono text-gray-300">net.2.weight</span> и <span class="font-mono text-gray-300">net.4.weight</span>: они формируют наиболее ёмкие преобразования признаков перед выходом 28×28.
+                            </p>
+                            <p>
+                                Все тензоры имеют тип <span class="font-mono text-gray-300">float32</span> в сохранённом файле; смешанная точность <span class="font-mono text-gray-300">bfloat16</span> применяется во время вычислений через autocast.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pipeline & Optimizations -->
+            <div class="text-center mb-12 fade-in-section">
+                <h2 class="text-3xl font-bold text-white mb-4">Технологии и Оптимизации</h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-16 fade-in-section">
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center mb-4 text-blue-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                    </div>
+                    <h4 class="font-bold text-white mb-2">Intel XPU</h4>
+                    <p class="text-gray-400 text-sm">Автоматическое ускорение на Intel GPU (Arc, Flex) через PyTorch XPU backend.</p>
+                </div>
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center mb-4 text-purple-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    </div>
+                    <h4 class="font-bold text-white mb-2">BFloat16 Precision</h4>
+                    <p class="text-gray-400 text-sm">Снижение потребления памяти и ускорение инференса без потери точности.</p>
+                </div>
+                <div class="glass-card rounded-2xl p-6">
+                    <div class="w-10 h-10 rounded-lg bg-pink-500/20 flex items-center justify-center mb-4 text-pink-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+                    </div>
+                    <h4 class="font-bold text-white mb-2">Nearest Neighbor</h4>
+                    <p class="text-gray-400 text-sm">Художественный апскейлинг, превращающий 28x28 в четкий пиксель-арт 224x224.</p>
+                </div>
+            </div>
+
+            <!-- Diagnostics -->
+            <div class="glass-card rounded-3xl p-8 sm:p-12 mb-16 fade-in-section">
+                <h2 class="text-3xl font-bold text-white mb-8 text-center">Как читать поведение модели</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white/5 rounded-2xl p-6 border border-white/10">
+                        <h3 class="font-bold text-green-300 mb-3">Нормальный режим</h3>
+                        <p class="text-gray-400 text-sm">D Loss держится около 0.6–0.9, G Loss меняется волнами. Сети продолжают обмениваться полезным градиентом.</p>
+                    </div>
+                    <div class="bg-white/5 rounded-2xl p-6 border border-white/10">
+                        <h3 class="font-bold text-yellow-300 mb-3">D доминирует</h3>
+                        <p class="text-gray-400 text-sm">D Loss стремится к нулю, а G Loss резко растет. Генератору становится трудно получить обучающий сигнал.</p>
+                    </div>
+                    <div class="bg-white/5 rounded-2xl p-6 border border-white/10">
+                        <h3 class="font-bold text-pink-300 mb-3">Mode collapse</h3>
+                        <p class="text-gray-400 text-sm">Разные z дают похожие изображения. Обычно помогает менять learning rate, latent size или баланс шагов D/G.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Back to Main -->
+            <div class="text-center fade-in-section">
+                <a href="index.html" class="glass-button px-8 py-3 rounded-xl font-semibold text-gray-200 shadow-lg inline-flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    Вернуться на главную
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Футер -->
+    <footer class="border-t border-white/10 glass-panel py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center gap-3 mb-4 md:mb-0">
+                <a href="index.html">
+                    <svg class="h-10 w-10 opacity-80 shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                      <path class="net-line nl-1" d="M 39,42 L 56,50" />
+                      <path class="net-line nl-2" d="M 39,42 L 46,62" />
+                      <path class="net-line nl-3" d="M 56,50 L 66,45" />
+                      <path class="net-line nl-4" d="M 56,50 L 62,65" />
+                      <path class="net-line nl-5" d="M 46,62 L 62,65" />
+                      <path class="net-line nl-6" d="M 66,45 L 76,58" />
+                      <path class="net-line nl-7" d="M 62,65 L 76,58" />
+                      <path class="brush" d="M 26,60 C 29,45 26,25 30,15 C 49,12 59,28 44,40 C 39,43 32,40 27,38" />
+                      <circle class="node nd-1" cx="39" cy="42" r="2.5" />
+                      <circle class="node nd-2" cx="56" cy="50" r="2.5" />
+                      <circle class="node nd-3" cx="46" cy="62" r="2.5" />
+                      <circle class="node nd-4" cx="66" cy="45" r="2.5" />
+                      <circle class="node nd-5" cx="62" cy="65" r="2.5" />
+                      <circle class="node nd-6" cx="76" cy="58" r="2.5" />
+                      <text x="51.5" y="88" class="logo-text">REPIN 2.0</text>
+                    </svg>
+                </a>
+                <p class="text-gray-400 text-sm">© 2026 Repin 2.0 Project. Все права защищены.</p>
+            </div>
+            <div class="flex space-x-6">
+                <a href="https://github.com/zzzigrok/repin-2.0" target="_blank" class="text-gray-400 hover:text-white transition-colors">Документация</a>
+                <a href="https://github.com/zzzigrok/repin-2.0" target="_blank" class="text-gray-400 hover:text-white transition-colors">GitHub</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Скрипт для анимации при скролле -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.fade-in-section').forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>
