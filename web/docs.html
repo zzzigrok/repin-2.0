@@ -14,7 +14,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
     
     <!-- Marked.js for Markdown Parsing -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
     
     <!-- Mermaid.js for Diagrams -->
     <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
@@ -1178,21 +1178,55 @@
 
         // Initialize App
         document.addEventListener('DOMContentLoaded', () => {
-            mermaid.initialize({ 
-                startOnLoad: false, 
-                theme: 'dark',
-                securityLevel: 'loose'
-            });
+            // Check if docsData is loaded
+            if (!window.docsData) {
+                console.error("Documentation data (docs_data.js) is not loaded!");
+                const contentBody = document.getElementById('content-body');
+                if (contentBody) {
+                    contentBody.innerHTML = `
+                        <div class="my-6 p-6 rounded-xl border border-red-500/20 bg-red-500/10 text-red-200">
+                            <h3 class="font-bold text-white mb-2">Ошибка загрузки данных</h3>
+                            <p>Не удалось загрузить файл <code>docs_data.js</code>. Пожалуйста, запустите скрипт <code>sync_docs.py</code> для генерации базы данных документации.</p>
+                        </div>
+                    `;
+                }
+                const titleNode = document.getElementById('article-title');
+                if (titleNode) titleNode.textContent = "Ошибка";
+                return;
+            }
+
+            if (window.mermaid) {
+                try {
+                    mermaid.initialize({ 
+                        startOnLoad: false, 
+                        theme: 'dark',
+                        securityLevel: 'loose'
+                    });
+                } catch (e) {
+                    console.error("Mermaid initialization failed:", e);
+                }
+            }
             
-            configureMarked();
-            buildSidebar();
-            setupSearch();
+            if (window.marked) {
+                try {
+                    configureMarked();
+                } catch (e) {
+                    console.error("Marked configuration failed:", e);
+                }
+            }
             
-            // Listeners
-            window.addEventListener('hashchange', navigate);
-            
-            // Run router on first load
-            navigate();
+            try {
+                buildSidebar();
+                setupSearch();
+                
+                // Listeners
+                window.addEventListener('hashchange', navigate);
+                
+                // Run router on first load
+                navigate();
+            } catch (e) {
+                console.error("App initialization failed:", e);
+            }
         });
     </script>
 </body>
